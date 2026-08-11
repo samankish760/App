@@ -2,8 +2,16 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>جزوه حسابداری — دفتر تعاملی</title>
+
+<!-- ===== اجرای مستقل (بدون نوار آدرس سافاری) پس از Add to Home Screen ===== -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="جزوه حسابداری">
+<meta name="theme-color" content="#FFFDF6">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Mirza:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -84,16 +92,6 @@
   .legend span{ display:inline-flex; align-items:center; gap:6px; }
   .legend i{ width:14px;height:3px;border-radius:2px; display:inline-block; }
 
-  /* ===== Toolbar ===== */
-  .toolbar{
-    position:sticky; top:0; z-index:50;
-    background:var(--white);
-    border-bottom:1px dashed var(--ink-soft);
-    box-shadow: var(--shadow);
-    padding:9px 16px;
-    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
-  }
-  .toolbar .grow{flex:1 1 auto;}
   .btn{
     border:1.5px solid var(--ink);
     background:var(--white);
@@ -115,10 +113,55 @@
   .btn.small{ padding:4px 8px; font-size:11.5px; }
   input[type=file]{ display:none; }
 
+  /* ===== نوار بالای صفحه: قفل ویرایش + تنظیمات ===== */
+  /* در حالت اپ مستقل (بدون نوار سافاری) زیر ناچ نرود */
+  header.cover{ padding-top: calc(26px + env(safe-area-inset-top)); }
+  body{ padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+  .topbar{
+    position:sticky; top:0; z-index:140;
+    background:rgba(255,255,255,.94);
+    backdrop-filter:blur(6px);
+    border-bottom:1.5px solid var(--ink);
+    box-shadow:0 2px 10px rgba(20,30,55,.10);
+    padding:8px 14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .topbar .spacer{ flex:1 1 auto; }
+  .lock-btn{
+    border:1.5px solid var(--blue); background:var(--blue-soft); color:var(--blue);
+    padding:8px 16px; border-radius:999px;
+    font-family:var(--font-base); font-size:13px; font-weight:700;
+    cursor:pointer; display:inline-flex; align-items:center; gap:8px;
+    transition:.15s;
+  }
+  .lock-btn:hover{ transform:translateY(-1px); box-shadow:0 3px 10px rgba(20,30,55,.16); }
+  .lock-btn .lock-ico{ font-size:15px; }
+  body.locked .lock-btn{
+    background:#FDECEA; border-color:var(--danger); color:var(--danger);
+  }
+  .lock-hint{ font-size:11.5px; color:var(--ink-soft); }
+  @media (max-width:640px){ .lock-hint{ display:none; } }
+
+  /* حالت قفل: هیچ لمسی روی متن، تغییری ایجاد نمی‌کند */
+  body.locked .block-controls,
+  body.locked .block-divider,
+  body.locked .table-tools,
+  body.locked .canvas-toolbar{ display:none !important; }
+  body.locked .doc-inner svg.draw-canvas{ pointer-events:none; cursor:default; }
+  body.locked .doc-inner [contenteditable]{ cursor:default; }
+  body.locked .doc-inner [contenteditable]:focus{ box-shadow:none; }
+  body.locked #btnAddSession,
+  body.locked #btnAddHeading,
+  body.locked #btnAddText,
+  body.locked #btnAddNote,
+  body.locked #btnAddTable,
+  body.locked #btnAddCanvas,
+  body.locked #btnImportJson,
+  body.locked #btnReset{ opacity:.45; }
+
   /* ===== Floating settings / print buttons ===== */
   .float-controls{
-    position:fixed; top:14px; left:14px; z-index:130;
-    display:flex; flex-direction:column; gap:8px;
+    display:flex; align-items:center; gap:8px;
   }
   .fab{
     width:42px; height:42px; border-radius:50%;
@@ -130,44 +173,27 @@
   .fab:hover{ background:var(--highlight); border-color:var(--highlight-border); transform:translateY(-1px) rotate(6deg); }
   .fab:active{ transform:translateY(0) rotate(0); }
 
+  .fab.small-fab{ width:36px; height:36px; font-size:16px; }
+
   .settings-panel{
     position:fixed; top:64px; left:14px; z-index:125;
     background:var(--white); border:1.5px solid var(--ink); border-radius:10px;
     padding:14px; box-shadow:0 12px 32px rgba(0,0,0,.20);
     display:none; flex-direction:column; gap:8px;
-    width:250px; max-height:80vh; overflow:auto;
+    width:262px; max-height:80vh; overflow:auto;
   }
   .settings-panel.open{ display:flex; }
   .settings-panel .btn{ width:100%; }
   .settings-panel .font-ctrl{ justify-content:center; }
   .settings-panel hr{ border:none; border-top:1px dashed var(--paper-line); margin:2px 0; }
   .settings-panel h4{ margin:0; font-size:12px; color:var(--ink-soft); font-weight:700; }
+  .settings-panel .hint{ font-size:11px; color:var(--ink-soft); line-height:1.7; margin:0; }
 
-  /* ===== Content container — دفتر صفحه‌بندی‌شده ===== */
-  .notebook-wrap{ max-width:860px; margin:20px auto 40px; padding:0 20px; }
-  .page-nav{
-    display:flex; align-items:center; justify-content:center; gap:14px;
-    margin-bottom:14px;
-  }
-  .page-nav-btn{
-    border:1.5px solid var(--ink); background:var(--white); border-radius:7px;
-    padding:8px 20px; font-family:var(--font-base); font-size:13px; cursor:pointer;
-    transition:.12s;
-  }
-  .page-nav-btn:hover:not(:disabled){ background:var(--highlight); border-color:var(--highlight-border); }
-  .page-nav-btn:disabled{ opacity:.35; cursor:not-allowed; }
-  .page-indicator{
-    font-family:"Consolas","Courier New",monospace; font-size:13px;
-    color:var(--ink-soft); min-width:110px; text-align:center;
-  }
-  .pages-root{ position:relative; }
-  .page{ display:none; }
-  .page.active{ display:block; animation:pageIn .18s ease; }
-  @keyframes pageIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
-  .page-inner{
+  /* ===== Content container — سند یکپارچه (بدون صفحه‌بندی روی صفحه) ===== */
+  .notebook-wrap{ max-width:900px; margin:20px auto 40px; padding:0 20px; }
+  .doc-inner{
     position:relative;
-    min-height:1250px;
-    padding:30px 30px 34px;
+    padding:34px 30px 40px;
     background:
       repeating-linear-gradient(var(--paper) 0px, var(--paper) 30px, var(--paper-line) 31px);
     background-color:var(--paper);
@@ -176,29 +202,61 @@
       0 3px 10px rgba(20,30,55,.10);
     clip-path: polygon(0.00% 0px, 2.17% 9px, 4.35% 0px, 6.52% 9px, 8.70% 0px, 10.87% 9px, 13.04% 0px, 15.22% 9px, 17.39% 0px, 19.57% 9px, 21.74% 0px, 23.91% 9px, 26.09% 0px, 28.26% 9px, 30.43% 0px, 32.61% 9px, 34.78% 0px, 36.96% 9px, 39.13% 0px, 41.30% 9px, 43.48% 0px, 45.65% 9px, 47.83% 0px, 50.00% 9px, 52.17% 0px, 54.35% 9px, 56.52% 0px, 58.70% 9px, 60.87% 0px, 63.04% 9px, 65.22% 0px, 67.39% 9px, 69.57% 0px, 71.74% 9px, 73.91% 0px, 76.09% 9px, 78.26% 0px, 80.43% 9px, 82.61% 0px, 84.78% 9px, 86.96% 0px, 89.13% 9px, 91.30% 0px, 93.48% 9px, 95.65% 0px, 97.83% 9px, 100.00% 0px, 100% 100%, 0% 100%);
   }
-  .page-inner.probe{
-    position:absolute !important; visibility:hidden !important; pointer-events:none !important;
-    top:-9999px !important; left:-9999px !important; box-shadow:none !important; clip-path:none !important;
-  }
 
-  .page-num-stamp{
-    position:absolute; bottom:10px; left:16px;
-    font-family:"Consolas","Courier New",monospace; font-size:11px; color:var(--ink-soft);
+  /* ===== خط درج بین بخش‌ها ===== */
+  .block-divider{
+    position:relative; height:18px;
+    display:flex; align-items:center; justify-content:center;
+    opacity:.18; transition:opacity .15s;
   }
+  .block-divider::before{
+    content:''; position:absolute; right:0; left:0; height:1px;
+    background:linear-gradient(90deg, transparent, var(--blue-line) 15%, var(--blue-line) 85%, transparent);
+  }
+  .block-divider:hover, .block-divider.open{ opacity:1; }
+  .divider-add{
+    position:relative; z-index:2;
+    width:24px; height:24px; border-radius:50%;
+    border:1.5px solid var(--blue); background:var(--white); color:var(--blue);
+    font-size:16px; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 1px 4px rgba(20,30,55,.15);
+  }
+  .divider-add:hover{ background:var(--blue); color:#fff; transform:scale(1.12); }
+
+  .insert-menu{
+    position:fixed; z-index:220;
+    background:var(--white); border:1.5px solid var(--ink); border-radius:10px;
+    padding:7px; box-shadow:0 14px 34px rgba(0,0,0,.22);
+    display:none; flex-direction:column; gap:4px; min-width:210px;
+  }
+  .insert-menu.open{ display:flex; }
+  .insert-menu .mi{
+    border:1px solid var(--paper-line); background:var(--white); color:var(--ink);
+    border-radius:7px; padding:7px 10px; font-family:var(--font-base); font-size:12.5px;
+    cursor:pointer; text-align:right; display:flex; align-items:center; gap:7px;
+  }
+  .insert-menu .mi:hover{ background:var(--blue-soft); border-color:var(--blue-line); }
+  .insert-menu .mi-title{ font-size:11px; color:var(--ink-soft); padding:2px 4px 4px; }
 
   .block{
     position:relative;
     background:transparent;
-    border-bottom:1px dashed var(--paper-line);
-    margin-bottom:6px;
-    padding:12px 4px 16px;
+    margin-bottom:2px;
+    padding:12px 4px 14px;
+    scroll-margin-top:80px;
+  }
+  .block.flash{ animation:flashIn .9s ease; }
+  @keyframes flashIn{
+    0%{ background:var(--blue-soft); box-shadow:0 0 0 6px var(--blue-soft); }
+    100%{ background:transparent; box-shadow:none; }
   }
   .block-controls{
     position:absolute; top:6px; left:0px;
     display:flex; gap:4px;
     opacity:0; transition:.15s;
   }
-  .block:hover .block-controls{ opacity:1; }
+  .block:hover .block-controls, .block:focus-within .block-controls{ opacity:1; }
   .icon-btn{
     width:24px;height:24px;border-radius:6px;
     border:1px solid var(--paper-line); background:var(--white);
@@ -223,6 +281,7 @@
     font-variant-numeric: tabular-nums;
     background:var(--blue-soft); color:var(--blue);
     border-radius:5px; padding:1px 7px; font-size:calc(12px * var(--font-scale)); font-weight:700;
+    min-width:14px; display:inline-block; text-align:center;
   }
   .p-block{ font-size:calc(14.5px * var(--font-scale)); color:var(--ink); }
   .p-block ul{ margin:6px 0; padding-inline-start:20px; }
@@ -233,8 +292,7 @@
   .note-block{
     background:var(--highlight);
     background:linear-gradient(100deg, transparent 0%, transparent 2%, var(--highlight) 2%, var(--highlight) 98%, transparent 98%);
-    border-bottom:1px dashed var(--paper-line);
-    padding:12px 14px 16px;
+    padding:12px 14px 14px;
     border-radius:2px;
   }
   .note-block .note-label{
@@ -263,12 +321,6 @@
   .block.mine table.jz-table td,
   .block.mine table.jz-table th{ color:var(--mine); font-family:var(--font-hand); font-size:calc(16px * var(--font-scale)); }
   .block.mine table.jz-table th{ background:var(--mine-bg); }
-  .mine-badge{
-    display:inline-flex; align-items:center; gap:4px;
-    font-size:11px; color:var(--mine); background:var(--mine-bg);
-    border:1px solid var(--mine-border); border-radius:999px; padding:1px 8px;
-    margin-inline-start:8px; vertical-align:middle; font-weight:700;
-  }
   .icon-btn.mine-toggle.active{ background:var(--mine-bg); color:var(--mine); border-color:var(--mine); }
 
   table.jz-table{
@@ -306,7 +358,7 @@
   .color-dot{ width:16px;height:16px;border-radius:50%; border:1px solid #0002; cursor:pointer; }
 
   footer.page-footer{
-    max-width:860px; margin:20px auto 0; padding:0 20px;
+    max-width:900px; margin:20px auto 0; padding:0 20px;
     color:var(--ink-soft); font-size:12px; text-align:center;
   }
 
@@ -348,27 +400,54 @@
   }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px); }
 
-  /* ===== Print ===== */
+  /* ===== ظرف اندازه‌گیری و ظرف چاپ ===== */
+  #printRoot{ display:none; }
+  .print-probe{
+    position:absolute !important; left:-10000px !important; top:0 !important;
+    width:688px; visibility:hidden !important; pointer-events:none !important;
+  }
+  .print-cover{ padding-bottom:10px; margin-bottom:10px; border-bottom:2px solid var(--ink); }
+  .print-cover h1{ font-size:19pt; margin:0 0 4px; }
+  .print-cover p{ font-size:9.5pt; color:#444; margin:0; }
+
+  /* ===== Print — خروجی صفحه‌بندی‌شده با شماره صفحه ===== */
+  @page{ size:A4; margin:14mm 14mm 16mm; }
   @media print{
-    .float-controls, .settings-panel, .block-controls, .canvas-toolbar, .table-tools, .modal-overlay, footer.page-footer, .tape, .page-nav{ display:none !important; }
-    body{ background:#fff; }
-    header.cover{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .note-block{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .block{ break-inside:avoid; }
-    .notebook-wrap{ margin:0; padding:0; max-width:none; }
-    .page{ display:block !important; page-break-after:always; }
-    .page:last-child{ page-break-after:auto; }
-    .page-inner{
-      clip-path:none; box-shadow:none; min-height:0; padding:8px 16px;
-      -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    html,body{ background:#fff !important; padding:0; margin:0; }
+    .topbar, .float-controls, .settings-panel, .modal-overlay, .toast,
+    footer.page-footer, .notebook-wrap, header.cover, .insert-menu{ display:none !important; }
+    #printRoot{ display:block !important; }
+    .print-page{
+      position:relative;
+      width:100%;
+      height:263mm;
+      overflow:hidden;
+      page-break-after:always;
+      break-after:page;
     }
-    .page-num-stamp{ display:none; }
+    .print-page.auto-height{ height:auto; min-height:0; overflow:visible; }
+    .print-page:last-child{ page-break-after:auto; break-after:auto; }
+    .print-page-num{
+      position:absolute; bottom:0; right:0; left:0;
+      text-align:center; font-size:9pt; color:#555;
+      border-top:1px solid #CBD5E1; padding-top:3px;
+      font-family:var(--font-base);
+    }
+    .print-page.auto-height .print-page-num{ position:static; margin-top:8px; }
+    .print-page .block-controls,
+    .print-page .table-tools,
+    .print-page .canvas-toolbar,
+    .print-page .block-divider{ display:none !important; }
+    .print-page .block{ break-inside:avoid; }
+    .print-page .note-block,
+    .print-page .num-badge,
+    .print-page table.jz-table th,
+    .print-cover{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   }
 
   @media (max-width:640px){
-    .page-inner{ padding:22px 16px 26px; }
+    .doc-inner{ padding:24px 16px 30px; }
     h1.title{ font-size:20px; }
-    .toolbar{ justify-content:flex-start; }
     svg.draw-canvas{ height:260px; }
     .block.mine .p-block{ font-size:calc(16.5px * var(--font-scale)); }
   }
@@ -402,19 +481,29 @@
     <div class="legend">
       <span><i style="background:var(--ink)"></i> متن معمولی = محتوای اصلی جزوه/اکسل</span>
       <span><i style="background:var(--mine)"></i> متن دست‌نویس آبی = یادداشت‌های خود شما</span>
+      <span><i style="background:var(--blue)"></i> برای افزودن در هر نقطه، روی دکمه ＋ بین دو بخش کلیک کنید</span>
     </div>
   </div>
 </header>
 
-<div class="float-controls">
-  <button class="fab" id="btnSettingsToggle" title="تنظیمات">⚙</button>
+<div class="topbar">
+  <button class="lock-btn" id="btnLock" title="قفل/باز کردن ویرایش">
+    <span class="lock-ico" id="lockIco">🔓</span>
+    <span id="lockText">ویرایش باز است — کلیک کنید تا قفل شود</span>
+  </button>
+  <span class="lock-hint" id="lockHint">در حالت قفل، لمس و اسکرول هیچ تغییری در متن ایجاد نمی‌کند.</span>
+  <span class="spacer"></span>
+  <div class="float-controls">
+    <button class="fab small-fab" id="btnSettingsToggle" title="تنظیمات">⚙</button>
+  </div>
 </div>
 
 <div class="settings-panel" id="settingsPanel">
   <h4>خروجی</h4>
-  <button class="btn primary" id="btnPrint">🖶 چاپ / خروجی PDF</button>
+  <button class="btn primary" id="btnPrint">🖶 چاپ / خروجی PDF (صفحه‌بندی‌شده)</button>
   <hr>
-  <h4>افزودن محتوا</h4>
+  <h4>افزودن محتوا (در محل فعلی صفحه)</h4>
+  <p class="hint">برای درج دقیق در یک نقطه‌ی مشخص، از دکمه‌ی ＋ روی خط‌چین بین بخش‌ها استفاده کنید.</p>
   <button class="btn primary" id="btnAddSession">➕ افزودن یادداشت جلسه جدید</button>
   <button class="btn" id="btnAddHeading">＋ سرفصل</button>
   <button class="btn" id="btnAddText">＋ متن</button>
@@ -438,15 +527,24 @@
 </div>
 
 <div class="notebook-wrap">
-  <div class="page-nav">
-    <button class="page-nav-btn" id="btnPrevPage">صفحه قبل</button>
-    <span class="page-indicator" id="pageIndicator">صفحه ۱ از ۱</span>
-    <button class="page-nav-btn" id="btnNextPage">صفحه بعد</button>
-  </div>
   <main id="content"></main>
 </div>
 
-<footer class="page-footer">دفتر یادداشت حسابداری — تغییرات به‌صورت خودکار در همین مرورگر ذخیره می‌شود. برای انتقال به سیستم دیگر، از «خروجی پشتیبان» استفاده کنید.</footer>
+<div id="printRoot"></div>
+
+<footer class="page-footer">دفتر یادداشت حسابداری — تغییرات به‌صورت خودکار در همین مرورگر ذخیره می‌شود و صفحه هرگز رفرش نمی‌شود. برای انتقال به سیستم دیگر، از «خروجی پشتیبان» استفاده کنید.</footer>
+
+<!-- منوی درج بین بخش‌ها -->
+<div class="insert-menu" id="insertMenu">
+  <div class="mi-title">درج در این نقطه:</div>
+  <button class="mi" data-add="h1">▍ سرفصل اصلی</button>
+  <button class="mi" data-add="h2">▎ زیرسرفصل</button>
+  <button class="mi" data-add="p">＋ متن / پاراگراف</button>
+  <button class="mi" data-add="note">➤ نکته</button>
+  <button class="mi" data-add="table">▦ جدول</button>
+  <button class="mi" data-add="canvas">↗ بوم ترسیم</button>
+  <button class="mi" data-add="session">➕ یادداشت جلسه</button>
+</div>
 
 <!-- Modal: quick add session -->
 <div class="modal-overlay" id="modalSession">
@@ -658,6 +756,49 @@ let blocks = [];
 let idCounter = 1000;
 let globalFontScale = parseFloat(localStorage.getItem(FONT_SCALE_KEY)) || 1;
 
+/* موقعیتی که درج بعدی باید در آن انجام شود ('END' یا id بلوکی که قبل از آن درج می‌شود) */
+let pendingInsertBefore = 'END';
+
+/* ===== قفل ویرایش ===== */
+const LOCK_KEY = 'accountingNotebook_locked_v1';
+let isLocked = localStorage.getItem(LOCK_KEY) === '1';
+
+function applyLock(){
+  document.body.classList.toggle('locked', isLocked);
+  const doc = document.getElementById('docInner');
+  if(doc){
+    doc.querySelectorAll('[contenteditable]').forEach(n=>{
+      n.setAttribute('contenteditable', isLocked ? 'false' : 'true');
+    });
+  }
+  const ico = document.getElementById('lockIco');
+  const txt = document.getElementById('lockText');
+  if(ico) ico.textContent = isLocked ? '🔒' : '🔓';
+  if(txt) txt.textContent = isLocked
+    ? 'قفل است — برای ویرایش کلیک کنید'
+    : 'ویرایش باز است — کلیک کنید تا قفل شود';
+  localStorage.setItem(LOCK_KEY, isLocked ? '1' : '0');
+}
+function setLocked(v){
+  if(!v && isLocked) { /* باز کردن */ }
+  isLocked = !!v;
+  if(isLocked){
+    if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    closeInsertMenu();
+  }
+  applyLock();
+  toast(isLocked ? '🔒 جزوه قفل شد؛ اسکرول و لمس هیچ تغییری ایجاد نمی‌کند.' : '🔓 قفل باز شد؛ می‌توانید ویرایش کنید.');
+}
+/* اگر قفل است، جلوی هر تغییری را می‌گیرد */
+function lockedGuard(){
+  if(isLocked){ toast('🔒 جزوه قفل است؛ ابتدا از نوار بالا قفل را باز کنید.'); return true; }
+  return false;
+}
+document.getElementById('btnLock').onclick = (e)=>{
+  e.stopPropagation();
+  setLocked(!isLocked);
+};
+
 function toFaDigits(n){
   const map = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
   return String(n).replace(/\d/g, d=>map[+d]);
@@ -677,6 +818,8 @@ document.getElementById('btnFontMinus').onclick = ()=>{
 };
 
 function newId(){ idCounter++; return 'b_'+Date.now().toString(36)+idCounter; }
+function idxOf(id){ return blocks.findIndex(b=>b.id===id); }
+function nodeOf(id){ return document.querySelector('.doc-inner .block[data-id="'+id+'"]'); }
 
 function load(){
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -686,6 +829,12 @@ function load(){
   } else {
     blocks = JSON.parse(JSON.stringify(DEFAULT_BLOCKS));
   }
+  // تضمین یکتا بودن شناسه‌ها (برای فایل‌های پشتیبان قدیمی)
+  const seen = new Set();
+  blocks.forEach(b=>{
+    if(!b.id || seen.has(b.id)) b.id = newId();
+    seen.add(b.id);
+  });
 }
 function save(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(blocks));
@@ -698,182 +847,282 @@ function toast(msg){
   toast._t = setTimeout(()=>el.classList.remove('show'), 2200);
 }
 
-/* ---------- render / pagination ---------- */
-let currentPage = 0;
-let totalPages = 1;
-const PAGE_HEIGHT_BUDGET = 1250;
+/* ============================================================
+   رندر سند یکپارچه (بدون صفحه‌بندی روی صفحه نمایش)
+   ============================================================ */
+function makeDivider(beforeId){
+  const d = document.createElement('div');
+  d.className = 'block-divider';
+  d.dataset.before = beforeId;
+  d.innerHTML = '<button class="divider-add" title="افزودن محتوا در همین نقطه">＋</button>';
+  d.querySelector('.divider-add').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    openInsertMenu(e.currentTarget, beforeId);
+  });
+  return d;
+}
 
-function render(){
+function renderAll(){
+  const y = window.scrollY;
   const c = document.getElementById('content');
   c.innerHTML = '';
+
+  const doc = document.createElement('div');
+  doc.className = 'doc-inner';
+  doc.id = 'docInner';
+  c.appendChild(doc);
+
   if(blocks.length===0){
-    c.innerHTML = '<div class="empty-hint">جزوه خالی است. از آیکون ⚙ برای افزودن محتوا استفاده کنید.</div>';
-    totalPages = 1; currentPage = 0;
-    updatePageUI();
+    const hint = document.createElement('div');
+    hint.className = 'empty-hint';
+    hint.textContent = 'جزوه خالی است. از آیکون ⚙ یا دکمه ＋ برای افزودن محتوا استفاده کنید.';
+    doc.appendChild(hint);
+  }
+  blocks.forEach(b=>{
+    doc.appendChild(makeDivider(b.id));
+    doc.appendChild(renderBlock(b));
+  });
+  doc.appendChild(makeDivider('END'));
+  applyLock();
+  window.scrollTo(0, y);
+}
+
+/* پس از جابه‌جایی/حذف، شناسه‌ی خط‌چین‌ها را با ترتیب واقعی هماهنگ می‌کند */
+function syncDividers(){
+  const doc = document.getElementById('docInner');
+  if(!doc) return;
+  Array.from(doc.children).forEach(el=>{
+    if(!el.classList.contains('block-divider')) return;
+    let next = el.nextElementSibling;
+    while(next && !next.classList.contains('block')) next = next.nextElementSibling;
+    const id = next ? next.dataset.id : 'END';
+    el.dataset.before = id;
+    const btn = el.querySelector('.divider-add');
+    const clone = btn.cloneNode(true);
+    clone.addEventListener('click', (e)=>{ e.stopPropagation(); openInsertMenu(e.currentTarget, id); });
+    btn.replaceWith(clone);
+  });
+}
+
+/* ============================================================
+   منوی درج
+   ============================================================ */
+const insertMenu = document.getElementById('insertMenu');
+let insertMenuAnchor = null;
+
+function openInsertMenu(btn, beforeId){
+  if(lockedGuard()) return;
+  pendingInsertBefore = beforeId;
+  document.querySelectorAll('.block-divider.open').forEach(d=>d.classList.remove('open'));
+  btn.closest('.block-divider').classList.add('open');
+  insertMenuAnchor = btn;
+  insertMenu.classList.add('open');
+  const r = btn.getBoundingClientRect();
+  const mh = insertMenu.offsetHeight, mw = insertMenu.offsetWidth;
+  let top = r.bottom + 6;
+  if(top + mh > window.innerHeight - 8) top = Math.max(8, r.top - mh - 6);
+  let left = r.left + r.width/2 - mw/2;
+  left = Math.max(8, Math.min(left, window.innerWidth - mw - 8));
+  insertMenu.style.top = top+'px';
+  insertMenu.style.left = left+'px';
+}
+function closeInsertMenu(){
+  insertMenu.classList.remove('open');
+  document.querySelectorAll('.block-divider.open').forEach(d=>d.classList.remove('open'));
+  insertMenuAnchor = null;
+}
+insertMenu.querySelectorAll('.mi').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const kind = btn.dataset.add;
+    const at = pendingInsertBefore;
+    closeInsertMenu();
+    addByKind(kind, at);
+  });
+});
+document.addEventListener('click', (e)=>{
+  if(insertMenu.classList.contains('open') && !insertMenu.contains(e.target)) closeInsertMenu();
+});
+window.addEventListener('resize', closeInsertMenu);
+
+/* بلوکی که هم‌اکنون در وسط دید کاربر است (برای افزودن از پنل تنظیمات) */
+function currentAnchorBeforeId(){
+  const doc = document.getElementById('docInner');
+  if(!doc) return 'END';
+  const nodes = Array.from(doc.querySelectorAll('.block'));
+  if(!nodes.length) return 'END';
+  const mid = window.innerHeight * 0.45;
+  for(const n of nodes){
+    const r = n.getBoundingClientRect();
+    if(r.bottom > mid){
+      const i = idxOf(n.dataset.id);
+      return (i+1 < blocks.length) ? blocks[i+1].id : 'END';
+    }
+  }
+  return 'END';
+}
+
+function addByKind(kind, beforeId){
+  if(lockedGuard()) return;
+  if(kind==='table'){
+    pendingInsertBefore = beforeId;
+    openModal('modalTable');
     return;
   }
-
-  const pagesRoot = document.createElement('div');
-  pagesRoot.className = 'pages-root';
-  pagesRoot.id = 'pagesRoot';
-  c.appendChild(pagesRoot);
-
-  const nodes = blocks.map((b, idx)=> renderBlock(b, idx));
-
-  // بوم اندازه‌گیری نامرئی برای تعیین اینکه هر بخش چقدر ارتفاع می‌گیرد
-  const probe = document.createElement('div');
-  probe.className = 'page-inner probe';
-  pagesRoot.appendChild(probe);
-
-  let pages = [[]];
-  let curH = 0;
-  nodes.forEach(node=>{
-    probe.appendChild(node);
-    const h = node.getBoundingClientRect().height;
-    probe.removeChild(node);
-    const withGap = h + 14;
-    if(curH + withGap > PAGE_HEIGHT_BUDGET && pages[pages.length-1].length){
-      pages.push([]);
-      curH = 0;
-    }
-    pages[pages.length-1].push(node);
-    curH += withGap;
-  });
-  pagesRoot.removeChild(probe);
-
-  totalPages = pages.length;
-  if(currentPage > totalPages-1) currentPage = totalPages-1;
-  if(currentPage < 0) currentPage = 0;
-
-  pages.forEach((list, pi)=>{
-    const pageEl = document.createElement('div');
-    pageEl.className = 'page' + (pi===currentPage ? ' active' : '');
-    pageEl.dataset.pageIndex = pi;
-    const inner = document.createElement('div');
-    inner.className = 'page-inner';
-    list.forEach(n=> inner.appendChild(n));
-    const stamp = document.createElement('div');
-    stamp.className = 'page-num-stamp';
-    stamp.textContent = 'برگ ' + toFaDigits(pi+1);
-    inner.appendChild(stamp);
-    pageEl.appendChild(inner);
-    pagesRoot.appendChild(pageEl);
-  });
-
-  updatePageUI();
-}
-
-function updatePageUI(){
-  const label = document.getElementById('pageIndicator');
-  if(label) label.textContent = 'صفحه ' + toFaDigits(currentPage+1) + ' از ' + toFaDigits(totalPages);
-  document.querySelectorAll('.page').forEach(p=>{
-    p.classList.toggle('active', +p.dataset.pageIndex === currentPage);
-  });
-  const prevBtn = document.getElementById('btnPrevPage');
-  const nextBtn = document.getElementById('btnNextPage');
-  if(prevBtn) prevBtn.disabled = currentPage <= 0;
-  if(nextBtn) nextBtn.disabled = currentPage >= totalPages-1;
-}
-
-function gotoPage(n){
-  if(n<0 || n>=totalPages) return;
-  currentPage = n;
-  updatePageUI();
-  document.querySelector('.notebook-wrap').scrollIntoView({behavior:'smooth', block:'start'});
-}
-document.getElementById('btnPrevPage').onclick = ()=> gotoPage(currentPage-1);
-document.getElementById('btnNextPage').onclick = ()=> gotoPage(currentPage+1);
-
-/* ---------- settings panel ---------- */
-const settingsPanel = document.getElementById('settingsPanel');
-document.getElementById('btnSettingsToggle').onclick = (e)=>{
-  e.stopPropagation();
-  settingsPanel.classList.toggle('open');
-};
-document.addEventListener('click', (e)=>{
-  if(settingsPanel.classList.contains('open') &&
-     !settingsPanel.contains(e.target) &&
-     e.target.id !== 'btnSettingsToggle'){
-    settingsPanel.classList.remove('open');
+  if(kind==='session'){
+    pendingInsertBefore = beforeId;
+    openModal('modalSession');
+    return;
   }
-});
-
-function controlsHtml(idx){
-  const isMine = !!blocks[idx].mine;
-  const hasOwnScale = typeof blocks[idx].fontScale === 'number';
-  return `<div class="block-controls">
-    <div class="icon-btn mine-toggle${isMine?' active':''}" title="${isMine?'علامت‌گذاری به‌عنوان محتوای اصلی':'علامت‌گذاری به‌عنوان یادداشت خودم (آبی)'}" onclick="toggleMine(${idx})">✎</div>
-    <div class="icon-btn font-btn" title="کوچک‌تر کردن فونت این بخش (جدا از بقیه)" onclick="blockFont(${idx},-0.1)">الف−</div>
-    <div class="icon-btn font-btn" title="بزرگ‌تر کردن فونت این بخش (جدا از بقیه)" onclick="blockFont(${idx},0.1)">الف+</div>
-    ${hasOwnScale ? `<div class="icon-btn font-btn" title="بازگرداندن فونت این بخش به حالت عمومی" onclick="blockFontReset(${idx})">↺</div>` : ''}
-    <div class="icon-btn" title="انتقال به بالا" onclick="moveBlock(${idx},-1)">↑</div>
-    <div class="icon-btn" title="انتقال به پایین" onclick="moveBlock(${idx},1)">↓</div>
-    <div class="icon-btn del" title="حذف" onclick="deleteBlock(${idx})">✕</div>
-  </div>`;
-}
-function blockFont(idx, delta){
-  const current = (typeof blocks[idx].fontScale === 'number') ? blocks[idx].fontScale : globalFontScale;
-  let ns = Math.round((current + delta) * 100) / 100;
-  ns = Math.min(1.8, Math.max(0.7, ns));
-  blocks[idx].fontScale = ns;
-  save(); render();
-}
-function blockFontReset(idx){
-  delete blocks[idx].fontScale;
-  save(); render();
-}
-function toggleMine(idx){
-  blocks[idx].mine = !blocks[idx].mine;
-  save(); render();
+  let b;
+  if(kind==='h1')      b = {t:'h1', id:newId(), num:'', title:'سرفصل جدید', mine:true};
+  else if(kind==='h2') b = {t:'h2', id:newId(), num:'', title:'زیرسرفصل جدید', mine:true};
+  else if(kind==='p')  b = {t:'p',  id:newId(), html:'متن جدید را اینجا بنویسید...', mine:true};
+  else if(kind==='note')   b = {t:'note', id:newId(), html:'نکته جدید را اینجا بنویسید...', mine:true};
+  else if(kind==='canvas') b = {t:'canvas', id:newId(), svg:'', color:'#1D4ED8', mine:true};
+  else return;
+  insertBlock(b, beforeId, kind!=='canvas');
 }
 
-function renderBlock(b, idx){
+/* درج بلوک بدون رندر مجدد کل سند */
+function insertBlock(block, beforeId, focusIt){
+  const doc = document.getElementById('docInner');
+  const at = (beforeId==='END') ? blocks.length : idxOf(beforeId);
+  const pos = at < 0 ? blocks.length : at;
+  blocks.splice(pos, 0, block);
+  save();
+
+  const hint = doc.querySelector('.empty-hint');
+  if(hint) hint.remove();
+
+  const targetDivider = doc.querySelector('.block-divider[data-before="'+ (beforeId||'END') +'"]')
+                     || doc.querySelector('.block-divider[data-before="END"]');
+  const newDivider = makeDivider(block.id);
+  const newNode = renderBlock(block);
+  doc.insertBefore(newDivider, targetDivider);
+  doc.insertBefore(newNode, targetDivider);
+  syncDividers();
+  applyLock();
+
+  newNode.classList.add('flash');
+  setTimeout(()=>newNode.classList.remove('flash'), 950);
+  newNode.scrollIntoView({behavior:'smooth', block:'center'});
+  if(focusIt){
+    const ed = newNode.querySelector('[contenteditable]');
+    if(ed){
+      setTimeout(()=>{
+        ed.focus();
+        const range = document.createRange();
+        range.selectNodeContents(ed);
+        const sel = window.getSelection();
+        sel.removeAllRanges(); sel.addRange(range);
+      }, 220);
+    }
+  }
+  return newNode;
+}
+
+/* جایگزینی درجای یک بلوک (مثلاً بعد از افزودن ردیف جدول) بدون تکان خوردن صفحه */
+function refreshBlock(id){
+  const old = nodeOf(id);
+  if(!old) return;
+  const i = idxOf(id);
+  if(i<0) return;
+  const fresh = renderBlock(blocks[i]);
+  old.replaceWith(fresh);
+  applyLock();
+  return fresh;
+}
+
+/* ============================================================
+   ساخت DOM هر بلوک
+   ============================================================ */
+function controlsHtml(id){
+  return '<div class="block-controls">'+
+    '<div class="icon-btn mine-toggle" data-role="mine" title="یادداشت خودم / محتوای اصلی">✎</div>'+
+    '<div class="icon-btn font-btn" data-role="fminus" title="کوچک‌تر کردن فونت این بخش">الف−</div>'+
+    '<div class="icon-btn font-btn" data-role="fplus" title="بزرگ‌تر کردن فونت این بخش">الف+</div>'+
+    '<div class="icon-btn font-btn" data-role="freset" title="بازگرداندن فونت این بخش به حالت عمومی">↺</div>'+
+    '<div class="icon-btn" data-role="up" title="انتقال به بالا">↑</div>'+
+    '<div class="icon-btn" data-role="down" title="انتقال به پایین">↓</div>'+
+    '<div class="icon-btn" data-role="insert" title="افزودن بخش جدید پس از این بخش">＋</div>'+
+    '<div class="icon-btn del" data-role="del" title="حذف">✕</div>'+
+  '</div>';
+}
+
+function renderBlock(b){
   const wrap = document.createElement('div');
   wrap.className = 'block';
+  wrap.dataset.id = b.id;
   if(b.t==='note') wrap.classList.add('note-block');
   if(b.t==='canvas') wrap.classList.add('canvas-block');
   if(b.mine) wrap.classList.add('mine');
-  if(typeof b.fontScale === 'number'){
-    wrap.style.setProperty('--font-scale', b.fontScale);
-  }
+  if(typeof b.fontScale === 'number') wrap.style.setProperty('--font-scale', b.fontScale);
 
+  const id = b.id;
   if(b.t==='h1'){
-    wrap.innerHTML = controlsHtml(idx) +
-      `<h2 class="h1block"><span class="num-badge">${esc(b.num||'')}</span>
-       <span contenteditable="true" data-field="title" data-idx="${idx}">${esc(b.title)}</span></h2>`;
+    wrap.innerHTML = controlsHtml(id) +
+      '<h2 class="h1block"><span class="num-badge" contenteditable="true" data-field="num" data-id="'+id+'">'+esc(b.num||'')+'</span>'+
+      '<span contenteditable="true" data-field="title" data-id="'+id+'">'+esc(b.title)+'</span></h2>';
   } else if(b.t==='h2'){
-    wrap.innerHTML = controlsHtml(idx) +
-      `<h3 class="h2block"><span class="num-badge">${esc(b.num||'')}</span>
-       <span contenteditable="true" data-field="title" data-idx="${idx}">${esc(b.title)}</span></h3>`;
+    wrap.innerHTML = controlsHtml(id) +
+      '<h3 class="h2block"><span class="num-badge" contenteditable="true" data-field="num" data-id="'+id+'">'+esc(b.num||'')+'</span>'+
+      '<span contenteditable="true" data-field="title" data-id="'+id+'">'+esc(b.title)+'</span></h3>';
   } else if(b.t==='p'){
-    wrap.innerHTML = controlsHtml(idx) +
-      `<div class="p-block" contenteditable="true" data-field="html" data-idx="${idx}">${b.html}</div>`;
+    wrap.innerHTML = controlsHtml(id) +
+      '<div class="p-block" contenteditable="true" data-field="html" data-id="'+id+'">'+b.html+'</div>';
   } else if(b.t==='note'){
-    wrap.innerHTML = controlsHtml(idx) +
-      `<div class="note-label">نکته</div>
-       <div class="p-block" contenteditable="true" data-field="html" data-idx="${idx}">${b.html}</div>`;
+    wrap.innerHTML = controlsHtml(id) +
+      '<div class="note-label">نکته</div>'+
+      '<div class="p-block" contenteditable="true" data-field="html" data-id="'+id+'">'+b.html+'</div>';
   } else if(b.t==='table'){
-    wrap.appendChild(renderTable(b, idx));
-    const ctl = document.createElement('div');
-    ctl.innerHTML = controlsHtml(idx);
-    wrap.insertBefore(ctl.firstChild, wrap.firstChild);
+    wrap.innerHTML = controlsHtml(id);
+    wrap.appendChild(renderTable(b));
   } else if(b.t==='canvas'){
-    wrap.appendChild(renderCanvas(b, idx));
-    const ctl = document.createElement('div');
-    ctl.innerHTML = controlsHtml(idx);
-    wrap.insertBefore(ctl.firstChild, wrap.firstChild);
+    wrap.innerHTML = controlsHtml(id);
+    wrap.appendChild(renderCanvas(b));
   }
 
-  wrap.querySelectorAll('[contenteditable]').forEach(node=>{
+  // فقط فیلدهای مستقیم این بلوک (سلول‌های جدول جداگانه وصل می‌شوند)
+  wrap.querySelectorAll('[contenteditable][data-field]').forEach(node=>{
     node.addEventListener('blur', onFieldEdit);
+    node.addEventListener('keydown', (e)=>{
+      if(e.key==='Escape'){ node.blur(); }
+    });
   });
+
+  // کنترل‌ها
+  const ctl = wrap.querySelector('.block-controls');
+  if(ctl){
+    ctl.addEventListener('click', (e)=>{
+      const role = e.target.dataset.role;
+      if(!role) return;
+      e.stopPropagation();
+      if(lockedGuard()) return;
+      if(role==='mine')        toggleMine(id);
+      else if(role==='fminus') blockFont(id,-0.1);
+      else if(role==='fplus')  blockFont(id, 0.1);
+      else if(role==='freset') blockFontReset(id);
+      else if(role==='up')     moveBlock(id,-1);
+      else if(role==='down')   moveBlock(id, 1);
+      else if(role==='del')    deleteBlock(id);
+      else if(role==='insert'){
+        const i = idxOf(id);
+        const before = (i+1 < blocks.length) ? blocks[i+1].id : 'END';
+        openInsertMenu(e.target, before);
+      }
+    });
+    if(b.mine) ctl.querySelector('[data-role="mine"]').classList.add('active');
+  }
   return wrap;
 }
 
 function onFieldEdit(e){
-  const idx = +e.target.dataset.idx;
+  if(isLocked) return;
+  const id = e.target.dataset.id;
   const field = e.target.dataset.field;
-  blocks[idx][field] = e.target.innerHTML.trim();
+  const i = idxOf(id);
+  if(i<0) return;
+  blocks[i][field] = e.target.innerHTML.trim();
   save();
 }
 
@@ -881,43 +1130,109 @@ function esc(s){
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+/* ---------- عملیات بلوک: همه بدون رفرش/رندر مجدد کل سند ---------- */
+function toggleMine(id){
+  const i = idxOf(id); if(i<0) return;
+  blocks[i].mine = !blocks[i].mine;
+  save();
+  const n = nodeOf(id);
+  if(n){
+    n.classList.toggle('mine', !!blocks[i].mine);
+    n.querySelector('[data-role="mine"]').classList.toggle('active', !!blocks[i].mine);
+  }
+}
+function blockFont(id, delta){
+  const i = idxOf(id); if(i<0) return;
+  const current = (typeof blocks[i].fontScale === 'number') ? blocks[i].fontScale : globalFontScale;
+  let ns = Math.round((current + delta) * 100) / 100;
+  ns = Math.min(1.8, Math.max(0.7, ns));
+  blocks[i].fontScale = ns;
+  save();
+  const n = nodeOf(id);
+  if(n) n.style.setProperty('--font-scale', ns);
+}
+function blockFontReset(id){
+  const i = idxOf(id); if(i<0) return;
+  delete blocks[i].fontScale;
+  save();
+  const n = nodeOf(id);
+  if(n) n.style.removeProperty('--font-scale');
+}
+function moveBlock(id, dir){
+  const i = idxOf(id);
+  const j = i + dir;
+  if(i<0 || j<0 || j>=blocks.length) return;
+  const doc = document.getElementById('docInner');
+  const a = nodeOf(id);
+  const bNode = nodeOf(blocks[j].id);
+  if(!a || !bNode) return;
+
+  const y = window.scrollY;
+  const tmp = blocks[i]; blocks[i]=blocks[j]; blocks[j]=tmp;
+  save();
+
+  if(dir < 0) doc.insertBefore(a, bNode);
+  else doc.insertBefore(bNode, a);
+  syncDividers();
+  window.scrollTo(0, y);
+  a.classList.add('flash');
+  setTimeout(()=>a.classList.remove('flash'), 900);
+}
+function deleteBlock(id){
+  if(!confirm('این بخش حذف شود؟')) return;
+  const i = idxOf(id); if(i<0) return;
+  blocks.splice(i,1);
+  save();
+  const n = nodeOf(id);
+  if(n){
+    const prev = n.previousElementSibling;
+    if(prev && prev.classList.contains('block-divider')) prev.remove();
+    n.remove();
+  }
+  syncDividers();
+  toast('بخش حذف شد');
+}
+
 /* ---------- tables ---------- */
-function renderTable(b, idx){
+function renderTable(b){
+  const id = b.id;
   const box = document.createElement('div');
   let html = '';
   if(b.title){
-    html += `<h3 class="h2block" style="margin-bottom:8px;"><span contenteditable="true" data-field="title" data-idx="${idx}">${esc(b.title)}</span></h3>`;
+    html += '<h3 class="h2block" style="margin-bottom:8px;"><span contenteditable="true" data-field="title" data-id="'+id+'">'+esc(b.title)+'</span></h3>';
   }
-  html += `<table class="jz-table" data-idx="${idx}"><thead><tr>`;
+  html += '<table class="jz-table" data-id="'+id+'"><thead><tr>';
   b.headers.forEach((h,ci)=>{
-    html += `<th contenteditable="true" data-cell="h_${ci}">${esc(h)}</th>`;
+    html += '<th contenteditable="true" data-cell="h_'+ci+'">'+esc(h)+'</th>';
   });
-  html += `</tr></thead><tbody>`;
+  html += '</tr></thead><tbody>';
   b.rows.forEach((row,ri)=>{
     html += '<tr>';
     row.forEach((cell,ci)=>{
-      html += `<td contenteditable="true" data-cell="${ri}_${ci}">${esc(cell)}</td>`;
+      html += '<td contenteditable="true" data-cell="'+ri+'_'+ci+'">'+esc(cell)+'</td>';
     });
     html += '</tr>';
   });
-  html += `</tbody></table>
-    <div class="table-tools">
-      <button class="btn small" onclick="tableAddRow(${idx})">＋ ردیف</button>
-      <button class="btn small" onclick="tableAddCol(${idx})">＋ ستون</button>
-      <button class="btn small" onclick="tableDelRow(${idx})">－ آخرین ردیف</button>
-      <button class="btn small" onclick="tableDelCol(${idx})">－ آخرین ستون</button>
-    </div>`;
+  html += '</tbody></table>'+
+    '<div class="table-tools">'+
+      '<button class="btn small" data-tt="addRow">＋ ردیف</button>'+
+      '<button class="btn small" data-tt="addCol">＋ ستون</button>'+
+      '<button class="btn small" data-tt="delRow">－ آخرین ردیف</button>'+
+      '<button class="btn small" data-tt="delCol">－ آخرین ستون</button>'+
+    '</div>';
   box.innerHTML = html;
 
   box.querySelectorAll('[data-cell]').forEach(td=>{
     td.addEventListener('blur', ()=>{
+      if(isLocked) return;
+      const i = idxOf(id); if(i<0) return;
       const key = td.dataset.cell;
       if(key.startsWith('h_')){
         const ci = +key.split('_')[1];
-        blocks[idx].headers[ci] = td.innerHTML.trim();
+        blocks[i].headers[ci] = td.innerHTML.trim();
       } else {
-        const [ri,ci] = key.split('_').map(Number);
-        blocks[idx].rows[ri][ci] = td.innerHTML.trim();
+        const parts = key.split('_').map(Number);
+        blocks[i].rows[parts[0]][parts[1]] = td.innerHTML.trim();
       }
       save();
     });
@@ -925,65 +1240,66 @@ function renderTable(b, idx){
   box.querySelectorAll('[data-field="title"]').forEach(node=>{
     node.addEventListener('blur', onFieldEdit);
   });
+  box.querySelector('.table-tools').addEventListener('click', (e)=>{
+    const act = e.target.dataset.tt;
+    if(!act) return;
+    if(lockedGuard()) return;
+    const i = idxOf(id); if(i<0) return;
+    if(act==='addRow'){
+      blocks[i].rows.push(new Array(blocks[i].headers.length).fill(''));
+    } else if(act==='addCol'){
+      blocks[i].headers.push('ستون جدید');
+      blocks[i].rows.forEach(r=>r.push(''));
+    } else if(act==='delRow'){
+      if(blocks[i].rows.length>0) blocks[i].rows.pop();
+    } else if(act==='delCol'){
+      if(blocks[i].headers.length>1){
+        blocks[i].headers.pop();
+        blocks[i].rows.forEach(r=>r.pop());
+      }
+    }
+    save();
+    refreshBlock(id); // فقط همین جدول دوباره ساخته می‌شود؛ صفحه تکان نمی‌خورد
+  });
   return box;
-}
-function tableAddRow(idx){
-  const cols = blocks[idx].headers.length;
-  blocks[idx].rows.push(new Array(cols).fill(''));
-  save(); render();
-}
-function tableAddCol(idx){
-  blocks[idx].headers.push('ستون جدید');
-  blocks[idx].rows.forEach(r=>r.push(''));
-  save(); render();
-}
-function tableDelRow(idx){
-  if(blocks[idx].rows.length>0){ blocks[idx].rows.pop(); save(); render(); }
-}
-function tableDelCol(idx){
-  if(blocks[idx].headers.length>1){
-    blocks[idx].headers.pop();
-    blocks[idx].rows.forEach(r=>r.pop());
-    save(); render();
-  }
 }
 
 /* ---------- canvas drawing (arrows / freehand / table-grid / text) ---------- */
-function renderCanvas(b, idx){
+function renderCanvas(b){
+  const id = b.id;
   const box = document.createElement('div');
-  const toolId = 'tools_'+idx;
-  box.innerHTML = `
-    <div class="canvas-toolbar" id="${toolId}">
-      <div class="tool active" data-tool="arrow">↗ فلش</div>
-      <div class="tool" data-tool="pen">✎ آزاد</div>
-      <div class="tool" data-tool="grid">▦ جدول</div>
-      <div class="tool" data-tool="text">Ａ متن</div>
-      <input type="color" class="color-dot" value="${b.color||'#2F4B3C'}" id="color_${idx}">
-      <div class="tool" onclick="canvasUndo(${idx})">↺ لغو آخرین</div>
-      <div class="tool" onclick="canvasClear(${idx})">پاک کردن همه</div>
-    </div>
-    <div class="canvas-wrap">
-      <svg class="draw-canvas" id="svg_${idx}" data-idx="${idx}">
-        <defs>
-          <marker id="arrowhead_${idx}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-            <path d="M0,0 L8,3 L0,6 Z" fill="context-stroke"></path>
-          </marker>
-        </defs>
-        <g id="g_${idx}">${b.svg||''}</g>
-      </svg>
-    </div>`;
-  setTimeout(()=>initCanvas(idx, box), 0);
+  box.innerHTML =
+    '<div class="canvas-toolbar" id="tools_'+id+'">'+
+      '<div class="tool active" data-tool="arrow">↗ فلش</div>'+
+      '<div class="tool" data-tool="pen">✎ آزاد</div>'+
+      '<div class="tool" data-tool="grid">▦ جدول</div>'+
+      '<div class="tool" data-tool="text">Ａ متن</div>'+
+      '<input type="color" class="color-dot" value="'+(b.color||'#2F4B3C')+'" id="color_'+id+'">'+
+      '<div class="tool" data-act="undo">↺ لغو آخرین</div>'+
+      '<div class="tool" data-act="clear">پاک کردن همه</div>'+
+    '</div>'+
+    '<div class="canvas-wrap">'+
+      '<svg class="draw-canvas" id="svg_'+id+'">'+
+        '<defs>'+
+          '<marker id="arrowhead_'+id+'" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">'+
+            '<path d="M0,0 L8,3 L0,6 Z" fill="context-stroke"></path>'+
+          '</marker>'+
+        '</defs>'+
+        '<g id="g_'+id+'">'+(b.svg||'')+'</g>'+
+      '</svg>'+
+    '</div>';
+  setTimeout(()=>initCanvas(id, box), 0);
   return box;
 }
 
-function initCanvas(idx, box){
-  const svg = box.querySelector('#svg_'+idx);
-  const g = box.querySelector('#g_'+idx);
-  const toolbar = box.querySelector('#tools_'+idx);
-  const colorInput = box.querySelector('#color_'+idx);
+function initCanvas(id, box){
+  const svg = box.querySelector('#svg_'+id);
+  const g = box.querySelector('#g_'+id);
+  const toolbar = box.querySelector('#tools_'+id);
+  const colorInput = box.querySelector('#color_'+id);
+  if(!svg || !g || !toolbar) return;
   let currentTool = 'arrow';
   let drawing = false;
-  let startPt = null;
   let freePoints = [];
   let tempEl = null;
 
@@ -992,6 +1308,16 @@ function initCanvas(idx, box){
       toolbar.querySelectorAll('.tool[data-tool]').forEach(x=>x.classList.remove('active'));
       t.classList.add('active');
       currentTool = t.dataset.tool;
+    });
+  });
+  toolbar.querySelectorAll('.tool[data-act]').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      if(t.dataset.act==='undo'){
+        if(g.lastElementChild){ g.removeChild(g.lastElementChild); commit(); }
+      } else {
+        if(!confirm('همه ترسیم‌های این بوم پاک شود؟')) return;
+        g.innerHTML=''; commit();
+      }
     });
   });
 
@@ -1003,12 +1329,14 @@ function initCanvas(idx, box){
   }
 
   function commit(){
-    blocks[idx].svg = g.innerHTML;
-    blocks[idx].color = colorInput.value;
+    const i = idxOf(id); if(i<0) return;
+    blocks[i].svg = g.innerHTML;
+    blocks[i].color = colorInput.value;
     save();
   }
 
   svg.addEventListener('pointerdown', (e)=>{
+    if(isLocked) return;
     const pt = svgPoint(e);
     const color = colorInput.value;
     if(currentTool==='text'){
@@ -1053,18 +1381,17 @@ function initCanvas(idx, box){
       return;
     }
     drawing = true;
-    startPt = pt;
     if(currentTool==='arrow'){
       tempEl = document.createElementNS('http://www.w3.org/2000/svg','line');
       tempEl.setAttribute('x1',pt.x); tempEl.setAttribute('y1',pt.y);
       tempEl.setAttribute('x2',pt.x); tempEl.setAttribute('y2',pt.y);
       tempEl.setAttribute('stroke',color); tempEl.setAttribute('stroke-width','2.5');
-      tempEl.setAttribute('marker-end', `url(#arrowhead_${idx})`);
+      tempEl.setAttribute('marker-end', 'url(#arrowhead_'+id+')');
       g.appendChild(tempEl);
     } else if(currentTool==='pen'){
       freePoints = [pt];
       tempEl = document.createElementNS('http://www.w3.org/2000/svg','polyline');
-      tempEl.setAttribute('points', `${pt.x},${pt.y}`);
+      tempEl.setAttribute('points', pt.x+','+pt.y);
       tempEl.setAttribute('fill','none'); tempEl.setAttribute('stroke',color); tempEl.setAttribute('stroke-width','2.2');
       tempEl.setAttribute('stroke-linecap','round'); tempEl.setAttribute('stroke-linejoin','round');
       g.appendChild(tempEl);
@@ -1092,60 +1419,16 @@ function initCanvas(idx, box){
   svg.addEventListener('pointerleave', endDraw);
 }
 
-function canvasUndo(idx){
-  const g = document.getElementById('g_'+idx);
-  if(g && g.lastElementChild){
-    g.removeChild(g.lastElementChild);
-    blocks[idx].svg = g.innerHTML;
-    save();
-  }
-}
-function canvasClear(idx){
-  if(!confirm('همه ترسیم‌های این بوم پاک شود؟')) return;
-  const g = document.getElementById('g_'+idx);
-  if(g){ g.innerHTML=''; blocks[idx].svg=''; save(); }
-}
-
-/* ---------- block CRUD ---------- */
-function moveBlock(idx, dir){
-  const ni = idx+dir;
-  if(ni<0 || ni>=blocks.length) return;
-  const tmp = blocks[idx]; blocks[idx]=blocks[ni]; blocks[ni]=tmp;
-  save(); render();
-}
-function deleteBlock(idx){
-  if(!confirm('این بخش حذف شود؟')) return;
-  blocks.splice(idx,1);
-  save(); render();
-}
-function addBlock(block, focusAtEnd){
-  blocks.push(block);
-  save(); render();
-  if(focusAtEnd){
-    currentPage = totalPages - 1;
-    updatePageUI();
-    document.querySelector('.notebook-wrap').scrollIntoView({behavior:'smooth', block:'start'});
-  }
-}
-
+/* ---------- دکمه‌های پنل تنظیمات: درج در محل فعلی دید کاربر ---------- */
 document.getElementById('btnAddHeading').onclick = ()=>{
   const level = confirm('سرفصل اصلی باشد؟ (Cancel = زیرسرفصل)') ? 'h1':'h2';
-  const title = prompt('عنوان سرفصل را وارد کنید:', level==='h1' ? 'سرفصل جدید' : 'زیرسرفصل جدید');
-  if(!title) return;
-  const num = prompt('شماره (اختیاری، مثلاً ۸ یا ۸.۱):','') || '';
-  addBlock({t:level, id:newId(), num, title, mine:true}, true);
+  addByKind(level, currentAnchorBeforeId());
 };
-document.getElementById('btnAddText').onclick = ()=>{
-  addBlock({t:'p', id:newId(), html:'متن جدید را اینجا بنویسید...', mine:true}, true);
-};
-document.getElementById('btnAddNote').onclick = ()=>{
-  addBlock({t:'note', id:newId(), html:'نکته جدید را اینجا بنویسید...', mine:true}, true);
-};
-document.getElementById('btnAddTable').onclick = ()=> openModal('modalTable');
-document.getElementById('btnAddCanvas').onclick = ()=>{
-  addBlock({t:'canvas', id:newId(), svg:'', color:'#1D4ED8', mine:true}, true);
-};
-document.getElementById('btnAddSession').onclick = ()=> openModal('modalSession');
+document.getElementById('btnAddText').onclick   = ()=> addByKind('p', currentAnchorBeforeId());
+document.getElementById('btnAddNote').onclick   = ()=> addByKind('note', currentAnchorBeforeId());
+document.getElementById('btnAddCanvas').onclick = ()=> addByKind('canvas', currentAnchorBeforeId());
+document.getElementById('btnAddTable').onclick  = ()=> addByKind('table', currentAnchorBeforeId());
+document.getElementById('btnAddSession').onclick= ()=> addByKind('session', currentAnchorBeforeId());
 
 function submitTable(){
   const cols = Math.max(1, parseInt(document.getElementById('tableCols').value||'2',10));
@@ -1153,29 +1436,30 @@ function submitTable(){
   const title = document.getElementById('tableTitle').value.trim();
   const headers = Array.from({length:cols}, (_,i)=>'ستون '+(i+1));
   const rowsData = Array.from({length:rows}, ()=> new Array(cols).fill(''));
-  addBlock({t:'table', id:newId(), title, headers, rows:rowsData, mine:true}, true);
   closeModal('modalTable');
+  insertBlock({t:'table', id:newId(), title, headers, rows:rowsData, mine:true}, pendingInsertBefore, false);
+  document.getElementById('tableTitle').value='';
+  toast('جدول در محل انتخابی افزوده شد');
 }
 
 function submitSession(){
   const title = document.getElementById('sessionTitle').value.trim() || 'جلسه جدید';
   const text = document.getElementById('sessionText').value;
   const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
-  addBlock({t:'h1', id:newId(), num:'', title, mine:true}, false);
-  if(lines.length){
-    const html = '<ul>'+lines.map(l=>'<li>'+esc(l)+'</li>').join('')+'</ul>';
-    addBlock({t:'p', id:newId(), html, mine:true}, false);
-  } else {
-    addBlock({t:'p', id:newId(), html:'متن یادداشت را اینجا کامل کنید...', mine:true}, false);
-  }
+  const at = pendingInsertBefore;
+
+  const head = {t:'h1', id:newId(), num:'', title, mine:true};
+  const body = lines.length
+    ? {t:'p', id:newId(), html:'<ul>'+lines.map(l=>'<li>'+esc(l)+'</li>').join('')+'</ul>', mine:true}
+    : {t:'p', id:newId(), html:'متن یادداشت را اینجا کامل کنید...', mine:true};
+
+  closeModal('modalSession');
+  insertBlock(head, at, false);
+  insertBlock(body, at, false);
+
   document.getElementById('sessionTitle').value='';
   document.getElementById('sessionText').value='';
-  closeModal('modalSession');
-  render();
-  currentPage = totalPages - 1;
-  updatePageUI();
-  document.querySelector('.notebook-wrap').scrollIntoView({behavior:'smooth', block:'start'});
-  toast('یادداشت جلسه جدید اضافه شد');
+  toast('یادداشت جلسه جدید در محل انتخابی افزوده شد');
 }
 
 /* ---------- modal helpers ---------- */
@@ -1185,7 +1469,106 @@ document.querySelectorAll('.modal-overlay').forEach(ov=>{
   ov.addEventListener('click', (e)=>{ if(e.target===ov) ov.classList.remove('open'); });
 });
 
-/* ---------- import / export / print / reset ---------- */
+/* ---------- settings panel ---------- */
+const settingsPanel = document.getElementById('settingsPanel');
+document.getElementById('btnSettingsToggle').onclick = (e)=>{
+  e.stopPropagation();
+  settingsPanel.classList.toggle('open');
+};
+document.addEventListener('click', (e)=>{
+  if(settingsPanel.classList.contains('open') &&
+     !settingsPanel.contains(e.target) &&
+     e.target.id !== 'btnSettingsToggle'){
+    settingsPanel.classList.remove('open');
+  }
+});
+
+/* ============================================================
+   خروجی چاپی: صفحه‌بندی A4 + شماره صفحه
+   (نمای روی صفحه دست‌نخورده و یکپارچه باقی می‌ماند)
+   ============================================================ */
+const PRINT_WIDTH_PX = 688;   // 182mm محتوای A4 با حاشیه ۱۴ میلی‌متر
+const PRINT_BUDGET_PX = 965;  // ~263mm ارتفاع مفید منهای نوار شماره صفحه
+
+function buildPrintPages(){
+  const root = document.getElementById('printRoot');
+  const doc = document.getElementById('docInner');
+  if(!doc) return;
+  root.innerHTML = '';
+
+  const probe = document.createElement('div');
+  probe.className = 'print-probe';
+  document.body.appendChild(probe);
+
+  // سربرگ فشرده برای صفحه اول
+  const cover = document.createElement('div');
+  cover.className = 'print-cover';
+  cover.innerHTML =
+    '<h1>'+ document.querySelector('h1.title').textContent +'</h1>'+
+    '<p>'+ document.querySelector('.subtitle').textContent +'</p>';
+  probe.appendChild(cover);
+  const coverH = cover.getBoundingClientRect().height;
+  probe.removeChild(cover);
+
+  const liveNodes = Array.from(doc.querySelectorAll('.block'));
+  const pages = [[]];
+  let curH = coverH + 10;
+
+  liveNodes.forEach(live=>{
+    const clone = live.cloneNode(true);
+    const ctl = clone.querySelector('.block-controls'); if(ctl) ctl.remove();
+    const tt = clone.querySelector('.table-tools'); if(tt) tt.remove();
+    const ct = clone.querySelector('.canvas-toolbar'); if(ct) ct.remove();
+    clone.querySelectorAll('[contenteditable]').forEach(n=>n.removeAttribute('contenteditable'));
+
+    probe.appendChild(clone);
+    const h = clone.getBoundingClientRect().height;
+    probe.removeChild(clone);
+
+    const need = h + 8;
+    if(curH + need > PRINT_BUDGET_PX && pages[pages.length-1].length){
+      pages.push([]);
+      curH = 0;
+    }
+    pages[pages.length-1].push({node:clone, h:h});
+    curH += need;
+  });
+
+  document.body.removeChild(probe);
+
+  const total = pages.length;
+  pages.forEach((list, pi)=>{
+    const pg = document.createElement('div');
+    pg.className = 'print-page';
+    if(list.length===1 && list[0].h > PRINT_BUDGET_PX) pg.classList.add('auto-height');
+    if(pi===0) {
+      const cv = cover.cloneNode(true);
+      pg.appendChild(cv);
+    }
+    list.forEach(item=> pg.appendChild(item.node));
+    const num = document.createElement('div');
+    num.className = 'print-page-num';
+    num.textContent = 'صفحه ' + toFaDigits(pi+1) + ' از ' + toFaDigits(total);
+    pg.appendChild(num);
+    root.appendChild(pg);
+  });
+}
+
+document.getElementById('btnPrint').onclick = ()=>{
+  settingsPanel.classList.remove('open');
+  closeInsertMenu();
+  buildPrintPages();
+  setTimeout(()=> window.print(), 120);
+};
+// اگر کاربر با Ctrl+P چاپ بگیرد هم صفحه‌بندی ساخته می‌شود
+window.addEventListener('beforeprint', ()=>{
+  if(!document.getElementById('printRoot').children.length) buildPrintPages();
+});
+window.addEventListener('afterprint', ()=>{
+  document.getElementById('printRoot').innerHTML = '';
+});
+
+/* ---------- import / export / reset ---------- */
 document.getElementById('btnExportJson').onclick = ()=>{
   const data = JSON.stringify(blocks, null, 2);
   const blob = new Blob([data], {type:'application/json'});
@@ -1198,7 +1581,10 @@ document.getElementById('btnExportJson').onclick = ()=>{
   toast('فایل پشتیبان دانلود شد');
 };
 
-document.getElementById('btnImportJson').onclick = ()=> document.getElementById('fileImport').click();
+document.getElementById('btnImportJson').onclick = ()=>{
+  if(lockedGuard()) return;
+  document.getElementById('fileImport').click();
+};
 document.getElementById('fileImport').addEventListener('change', (e)=>{
   const file = e.target.files[0];
   if(!file) return;
@@ -1210,7 +1596,9 @@ document.getElementById('fileImport').addEventListener('change', (e)=>{
       const mode = confirm('محتوای فایل جایگزین جزوه فعلی شود؟\nOK = جایگزینی کامل | Cancel = افزودن به انتهای جزوه فعلی');
       if(mode){ blocks = data; }
       else { blocks = blocks.concat(data.map(b=>({...b, id:newId()}))); }
-      save(); render();
+      const seen = new Set();
+      blocks.forEach(b=>{ if(!b.id || seen.has(b.id)) b.id = newId(); seen.add(b.id); });
+      save(); renderAll();
       toast('بازیابی با موفقیت انجام شد');
     }catch(err){
       alert('فایل معتبر نیست یا خراب است.');
@@ -1220,27 +1608,18 @@ document.getElementById('fileImport').addEventListener('change', (e)=>{
   e.target.value = '';
 });
 
-document.getElementById('btnPrint').onclick = ()=>{
-  // بستن پنل تنظیمات قبل از چاپ
-  settingsPanel.classList.remove('open');
-  // چاپ مستقیم در همین تب و همین پنجره (بدون بازکردن تب/پنجرهٔ جدید)؛
-  // کاربر از دیالوگ چاپ مرورگر گزینهٔ «ذخیره به‌صورت PDF» را انتخاب می‌کند
-  // و فایل به‌صورت پنجرهٔ دانلود در همان تب ذخیره می‌شود.
-  // کنترل‌ها و نوار ابزار طبق قواعد @media print به‌طور خودکار در نسخهٔ چاپی/PDF پنهان می‌شوند.
-  setTimeout(()=> window.print(), 50);
-};
-
 document.getElementById('btnReset').onclick = ()=>{
+  if(lockedGuard()) return;
   if(!confirm('همه تغییرات پاک شده و جزوه به نسخه اصلی برمی‌گردد. ادامه می‌دهید؟')) return;
   blocks = JSON.parse(JSON.stringify(DEFAULT_BLOCKS));
-  save(); render();
+  save(); renderAll();
   toast('جزوه به نسخه اصلی بازگشت');
 };
 
 /* ---------- init ---------- */
 applyGlobalFontScale();
 load();
-render();
+renderAll();
 </script>
 </body>
 </html>
