@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جزوه حسابداری — دفتر تعاملی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Mirza:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFFDF6;
+    --paper-line:#CFE1EE;
+    --margin-line:#E8B0AE;
+    --ink:#2B2E36;
+    --ink-soft:#5B6270;
+    --blue:#1D5DA6;
+    --blue-soft:#DCEAFA;
+    --blue-line:#B7D3F0;
+    --highlight:#FFF1A8;
+    --highlight-border:#E3C13B;
+    --danger:#A13D2B;
+    --white:#FFFFFF;
+    --radius:8px;
+    --shadow: 0 1px 3px rgba(43,46,54,.06);
+    --mine:#1447B8;
+    --mine-bg:#EAF1FD;
+    --mine-border:#BBD3F3;
+    --font-base:"Vazirmatn","Tahoma","Segoe UI",sans-serif;
+    --font-hand:"Mirza","Vazirmatn","Tahoma",cursive;
+    --font-scale:1;
+    --desk-bg:#E4E9F1;
+    --desk-bg-2:#D8DFEA;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 8%, rgba(255,255,255,.5), transparent 45%),
+      linear-gradient(160deg, var(--desk-bg) 0%, var(--desk-bg-2) 100%);
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:var(--font-base);
+    line-height:1.9;
+    padding-bottom:80px;
+  }
+  ::selection{ background:var(--highlight); }
+
+  /* ===== Header / cover ===== */
+  header.cover{
+    background:var(--white);
+    padding:26px 22px 18px;
+    position:relative;
+    border-bottom:2px solid var(--ink);
+    box-shadow: var(--shadow);
+  }
+  .cover-inner{ max-width:900px; margin:0 auto; position:relative; }
+  .tape{
+    position:absolute; width:70px; height:22px;
+    background:rgba(255,241,168,.75);
+    border:1px solid rgba(227,193,59,.5);
+    top:-10px;
+  }
+  .tape.t1{ right:24px; transform:rotate(-4deg); }
+  .tape.t2{ left:36px; transform:rotate(3deg); }
+  .cover-title-row{ display:flex; align-items:center; gap:10px; }
+  .seal{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:44px;height:44px;border-radius:50%;
+    border:2px solid var(--blue);
+    color:var(--blue);
+    font-family:var(--font-hand);
+    font-weight:700; font-size:22px;
+    flex:0 0 auto;
+    transform:rotate(-6deg);
+  }
+  h1.title{
+    font-size:25px; margin:0; font-weight:700; color:var(--ink);
+    text-decoration:underline; text-decoration-color:var(--blue-line); text-decoration-thickness:3px;
+    text-underline-offset:6px;
+  }
+  .subtitle{ color:var(--ink-soft); margin:10px 2px 0; font-size:13.5px; max-width:640px;}
+  .legend{ display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; font-size:12.5px; color:var(--ink-soft); }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .legend i{ width:14px;height:3px;border-radius:2px; display:inline-block; }
+
+  /* ===== Toolbar ===== */
+  .toolbar{
+    position:sticky; top:0; z-index:50;
+    background:var(--white);
+    border-bottom:1px dashed var(--ink-soft);
+    box-shadow: var(--shadow);
+    padding:9px 16px;
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+  }
+  .toolbar .grow{flex:1 1 auto;}
+  .btn{
+    border:1.5px solid var(--ink);
+    background:var(--white);
+    color:var(--ink);
+    padding:7px 12px;
+    border-radius:7px;
+    font-family:var(--font-base);
+    font-size:12.5px;
+    cursor:pointer;
+    display:inline-flex; align-items:center; gap:6px;
+    transition:.12s;
+    white-space:nowrap;
+  }
+  .btn:hover{ background:var(--highlight); border-color:var(--highlight-border); transform:translateY(-1px); }
+  .btn.primary{ background:var(--blue); color:#fff; border-color:var(--blue); }
+  .btn.primary:hover{ background:#164B87; border-color:#164B87; }
+  .btn.danger{ color:var(--danger); border-color:var(--danger); }
+  .btn.danger:hover{ background:#FBE6E1; }
+  .btn.small{ padding:4px 8px; font-size:11.5px; }
+  input[type=file]{ display:none; }
+
+  /* ===== Floating settings / print buttons ===== */
+  .float-controls{
+    position:fixed; top:14px; left:14px; z-index:130;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .fab{
+    width:42px; height:42px; border-radius:50%;
+    border:1.5px solid var(--ink); background:var(--white);
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; cursor:pointer; box-shadow:var(--shadow);
+    transition:.15s;
+  }
+  .fab:hover{ background:var(--highlight); border-color:var(--highlight-border); transform:translateY(-1px) rotate(6deg); }
+  .fab:active{ transform:translateY(0) rotate(0); }
+
+  .settings-panel{
+    position:fixed; top:64px; left:14px; z-index:125;
+    background:var(--white); border:1.5px solid var(--ink); border-radius:10px;
+    padding:14px; box-shadow:0 12px 32px rgba(0,0,0,.20);
+    display:none; flex-direction:column; gap:8px;
+    width:250px; max-height:80vh; overflow:auto;
+  }
+  .settings-panel.open{ display:flex; }
+  .settings-panel .btn{ width:100%; }
+  .settings-panel .font-ctrl{ justify-content:center; }
+  .settings-panel hr{ border:none; border-top:1px dashed var(--paper-line); margin:2px 0; }
+  .settings-panel h4{ margin:0; font-size:12px; color:var(--ink-soft); font-weight:700; }
+
+  /* ===== Content container — دفتر صفحه‌بندی‌شده ===== */
+  .notebook-wrap{ max-width:860px; margin:20px auto 40px; padding:0 20px; }
+  .page-nav{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    margin-bottom:14px;
+  }
+  .page-nav-btn{
+    border:1.5px solid var(--ink); background:var(--white); border-radius:7px;
+    padding:8px 20px; font-family:var(--font-base); font-size:13px; cursor:pointer;
+    transition:.12s;
+  }
+  .page-nav-btn:hover:not(:disabled){ background:var(--highlight); border-color:var(--highlight-border); }
+  .page-nav-btn:disabled{ opacity:.35; cursor:not-allowed; }
+  .page-indicator{
+    font-family:"Consolas","Courier New",monospace; font-size:13px;
+    color:var(--ink-soft); min-width:110px; text-align:center;
+  }
+  .pages-root{ position:relative; }
+  .page{ display:none; }
+  .page.active{ display:block; animation:pageIn .18s ease; }
+  @keyframes pageIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
+  .page-inner{
+    position:relative;
+    min-height:1250px;
+    padding:30px 30px 34px;
+    background:
+      repeating-linear-gradient(var(--paper) 0px, var(--paper) 30px, var(--paper-line) 31px);
+    background-color:var(--paper);
+    box-shadow:
+      0 16px 34px rgba(20,30,55,.18),
+      0 3px 10px rgba(20,30,55,.10);
+    clip-path: polygon(0.00% 0px, 2.17% 9px, 4.35% 0px, 6.52% 9px, 8.70% 0px, 10.87% 9px, 13.04% 0px, 15.22% 9px, 17.39% 0px, 19.57% 9px, 21.74% 0px, 23.91% 9px, 26.09% 0px, 28.26% 9px, 30.43% 0px, 32.61% 9px, 34.78% 0px, 36.96% 9px, 39.13% 0px, 41.30% 9px, 43.48% 0px, 45.65% 9px, 47.83% 0px, 50.00% 9px, 52.17% 0px, 54.35% 9px, 56.52% 0px, 58.70% 9px, 60.87% 0px, 63.04% 9px, 65.22% 0px, 67.39% 9px, 69.57% 0px, 71.74% 9px, 73.91% 0px, 76.09% 9px, 78.26% 0px, 80.43% 9px, 82.61% 0px, 84.78% 9px, 86.96% 0px, 89.13% 9px, 91.30% 0px, 93.48% 9px, 95.65% 0px, 97.83% 9px, 100.00% 0px, 100% 100%, 0% 100%);
+  }
+  .page-inner.probe{
+    position:absolute !important; visibility:hidden !important; pointer-events:none !important;
+    top:-9999px !important; left:-9999px !important; box-shadow:none !important; clip-path:none !important;
+  }
+
+  .page-num-stamp{
+    position:absolute; bottom:10px; left:16px;
+    font-family:"Consolas","Courier New",monospace; font-size:11px; color:var(--ink-soft);
+  }
+
+  .block{
+    position:relative;
+    background:transparent;
+    border-bottom:1px dashed var(--paper-line);
+    margin-bottom:6px;
+    padding:12px 4px 16px;
+  }
+  .block-controls{
+    position:absolute; top:6px; left:0px;
+    display:flex; gap:4px;
+    opacity:0; transition:.15s;
+  }
+  .block:hover .block-controls{ opacity:1; }
+  .icon-btn{
+    width:24px;height:24px;border-radius:6px;
+    border:1px solid var(--paper-line); background:var(--white);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:12px; color:var(--ink-soft);
+  }
+  .icon-btn:hover{ background:var(--highlight); color:var(--ink); border-color:var(--highlight-border); }
+  .icon-btn.del:hover{ background:#FBE6E1; color:var(--danger); border-color:var(--danger); }
+
+  h2.h1block{
+    font-size:calc(19px * var(--font-scale)); font-weight:700; color:var(--blue);
+    margin:0; padding-bottom:4px;
+    display:flex; align-items:baseline; gap:8px;
+    border-bottom:1px solid var(--blue-line);
+  }
+  h3.h2block{
+    font-size:calc(15.5px * var(--font-scale)); font-weight:600; color:var(--ink);
+    margin:0; display:flex; align-items:baseline; gap:8px;
+  }
+  .num-badge{
+    font-family:"Consolas","Courier New",monospace;
+    font-variant-numeric: tabular-nums;
+    background:var(--blue-soft); color:var(--blue);
+    border-radius:5px; padding:1px 7px; font-size:calc(12px * var(--font-scale)); font-weight:700;
+  }
+  .p-block{ font-size:calc(14.5px * var(--font-scale)); color:var(--ink); }
+  .p-block ul{ margin:6px 0; padding-inline-start:20px; }
+  .p-block li{ margin:5px 0; }
+  [contenteditable]{ outline:none; }
+  [contenteditable]:focus{ box-shadow: 0 0 0 2px var(--blue-soft) inset; border-radius:5px; }
+
+  .note-block{
+    background:var(--highlight);
+    background:linear-gradient(100deg, transparent 0%, transparent 2%, var(--highlight) 2%, var(--highlight) 98%, transparent 98%);
+    border-bottom:1px dashed var(--paper-line);
+    padding:12px 14px 16px;
+    border-radius:2px;
+  }
+  .note-block .note-label{
+    font-weight:700; color:#7A5B0E; font-size:calc(12px * var(--font-scale)); margin-bottom:4px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .note-block .note-label::before{ content:"➤"; }
+
+  /* ===== "mine" = یادداشت‌های خود کاربر، شبیه دست‌نویس ===== */
+  .block.mine{ border-right:3px solid var(--mine); padding-right:14px; }
+  .block.mine .p-block,
+  .block.mine .p-block *,
+  .block.mine h2.h1block span[data-field="title"],
+  .block.mine h3.h2block span[data-field="title"]{
+    color:var(--mine) !important;
+    font-family:var(--font-hand);
+  }
+  .block.mine .p-block{ font-size:calc(18px * var(--font-scale)); line-height:2.05; }
+  .block.mine h2.h1block span[data-field="title"]{ font-size:calc(22px * var(--font-scale)); }
+  .block.mine h3.h2block span[data-field="title"]{ font-size:calc(19px * var(--font-scale)); }
+  .block.mine.note-block{
+    background:linear-gradient(100deg, transparent 0%, transparent 2%, var(--mine-bg) 2%, var(--mine-bg) 98%, transparent 98%);
+  }
+  .block.mine.note-block .note-label{ color:var(--mine); font-family:var(--font-hand); font-size:calc(14px * var(--font-scale)); }
+  .block.mine.note-block .note-label::before{ content:"✎"; }
+  .block.mine table.jz-table td,
+  .block.mine table.jz-table th{ color:var(--mine); font-family:var(--font-hand); font-size:calc(16px * var(--font-scale)); }
+  .block.mine table.jz-table th{ background:var(--mine-bg); }
+  .mine-badge{
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:11px; color:var(--mine); background:var(--mine-bg);
+    border:1px solid var(--mine-border); border-radius:999px; padding:1px 8px;
+    margin-inline-start:8px; vertical-align:middle; font-weight:700;
+  }
+  .icon-btn.mine-toggle.active{ background:var(--mine-bg); color:var(--mine); border-color:var(--mine); }
+
+  table.jz-table{
+    width:100%; border-collapse:collapse; font-size:calc(13.5px * var(--font-scale)); margin-top:6px;
+  }
+  table.jz-table th, table.jz-table td{
+    border:1px dashed var(--paper-line);
+    padding:7px 9px; text-align:right;
+    font-variant-numeric: tabular-nums;
+  }
+  table.jz-table th{
+    border-bottom:2px solid var(--blue-line);
+    color:var(--blue); font-weight:700;
+  }
+  .table-tools{ display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+
+  /* ===== Canvas (drawing) block ===== */
+  .canvas-block .canvas-toolbar{
+    display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;
+  }
+  .canvas-toolbar .tool{
+    border:1px solid var(--paper-line); background:var(--white);
+    padding:5px 10px; border-radius:7px; font-size:12px; cursor:pointer;
+  }
+  .canvas-toolbar .tool.active{ background:var(--blue); color:#fff; border-color:var(--blue); }
+  .canvas-wrap{
+    border:1px dashed var(--paper-line); border-radius:6px;
+    background:
+      linear-gradient(90deg, #fff 24px, transparent 1px),
+      repeating-linear-gradient(#FEFCF2 0px,#FEFCF2 24px,#F1EADB 25px);
+    background-size: 25px 25px, auto;
+    overflow:hidden;
+  }
+  svg.draw-canvas{ width:100%; height:340px; display:block; touch-action:none; cursor:crosshair; }
+  .color-dot{ width:16px;height:16px;border-radius:50%; border:1px solid #0002; cursor:pointer; }
+
+  footer.page-footer{
+    max-width:860px; margin:20px auto 0; padding:0 20px;
+    color:var(--ink-soft); font-size:12px; text-align:center;
+  }
+
+  .empty-hint{
+    text-align:center; color:var(--ink-soft); font-size:13px; padding:30px 10px;
+    border:2px dashed var(--paper-line); border-radius:var(--radius); background:var(--white);
+  }
+
+  /* ===== Modal ===== */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(30,32,38,.5);
+    display:none; align-items:center; justify-content:center; z-index:200; padding:16px;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{
+    background:var(--white); border-radius:10px; width:100%; max-width:560px;
+    padding:20px; box-shadow:0 10px 40px rgba(0,0,0,.28);
+    max-height:88vh; overflow:auto; border:1.5px solid var(--ink);
+  }
+  .modal h3{ margin-top:0; color:var(--blue); }
+  .modal textarea{
+    width:100%; min-height:180px; font-family:inherit; font-size:14px;
+    padding:10px; border-radius:7px; border:1.5px solid var(--paper-line); resize:vertical;
+  }
+  .modal input[type=text], .modal input[type=number]{
+    width:100%; padding:8px 10px; border-radius:7px; border:1.5px solid var(--paper-line);
+    font-family:inherit; font-size:14px; margin-bottom:10px;
+  }
+  .modal-row{ display:flex; gap:10px; }
+  .modal-row > div{ flex:1; }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:14px; }
+  label.field-label{ font-size:12.5px; color:var(--ink-soft); display:block; margin-bottom:4px; }
+
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:#fff; padding:10px 18px; border-radius:7px;
+    font-size:13px; z-index:300; opacity:0; pointer-events:none; transition:.25s;
+    box-shadow:var(--shadow);
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px); }
+
+  /* ===== Print ===== */
+  @media print{
+    .float-controls, .settings-panel, .block-controls, .canvas-toolbar, .table-tools, .modal-overlay, footer.page-footer, .tape, .page-nav{ display:none !important; }
+    body{ background:#fff; }
+    header.cover{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .note-block{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .block{ break-inside:avoid; }
+    .notebook-wrap{ margin:0; padding:0; max-width:none; }
+    .page{ display:block !important; page-break-after:always; }
+    .page:last-child{ page-break-after:auto; }
+    .page-inner{
+      clip-path:none; box-shadow:none; min-height:0; padding:8px 16px;
+      -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    }
+    .page-num-stamp{ display:none; }
+  }
+
+  @media (max-width:640px){
+    .page-inner{ padding:22px 16px 26px; }
+    h1.title{ font-size:20px; }
+    .toolbar{ justify-content:flex-start; }
+    svg.draw-canvas{ height:260px; }
+    .block.mine .p-block{ font-size:calc(16.5px * var(--font-scale)); }
+  }
+
+  /* ===== Font size controls ===== */
+  .font-ctrl{
+    display:inline-flex; align-items:center; gap:4px;
+    border:1.5px solid var(--ink); border-radius:7px; padding:2px 4px;
+  }
+  .font-ctrl .btn{ padding:5px 9px; }
+  .font-scale-label{
+    font-family:"Consolas","Courier New",monospace;
+    font-size:12px; color:var(--ink-soft); min-width:38px; text-align:center;
+  }
+  .icon-btn.font-btn{ width:auto; padding:0 5px; font-size:10px; font-weight:700; }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="tape t1"></div>
+  <div class="tape t2"></div>
+  <div class="cover-inner">
+    <div class="cover-title-row">
+      <div class="seal">ح</div>
+      <div>
+        <h1 class="title">جزوه حسابداری — دفتر تعاملی</h1>
+        <p class="subtitle">تلخیص مباحث تکالیف مالیاتی، طبقه‌بندی حساب‌ها، معادله حسابداری، اسناد تجاری و معاملات نسیه</p>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--ink)"></i> متن معمولی = محتوای اصلی جزوه/اکسل</span>
+      <span><i style="background:var(--mine)"></i> متن دست‌نویس آبی = یادداشت‌های خود شما</span>
+    </div>
+  </div>
+</header>
+
+<div class="float-controls">
+  <button class="fab" id="btnSettingsToggle" title="تنظیمات">⚙</button>
+</div>
+
+<div class="settings-panel" id="settingsPanel">
+  <h4>خروجی</h4>
+  <button class="btn primary" id="btnPrint">🖶 چاپ / خروجی PDF</button>
+  <hr>
+  <h4>افزودن محتوا</h4>
+  <button class="btn primary" id="btnAddSession">➕ افزودن یادداشت جلسه جدید</button>
+  <button class="btn" id="btnAddHeading">＋ سرفصل</button>
+  <button class="btn" id="btnAddText">＋ متن</button>
+  <button class="btn" id="btnAddNote">➤ نکته</button>
+  <button class="btn" id="btnAddTable">▦ جدول</button>
+  <button class="btn" id="btnAddCanvas">↗ بوم ترسیم فلش/جدول</button>
+  <hr>
+  <h4>اندازه فونت همه بخش‌ها</h4>
+  <span class="font-ctrl" title="تغییر اندازه همه فونت‌های محتوا با هم">
+    <button class="btn small" id="btnFontMinus">الف−</button>
+    <span class="font-scale-label" id="fontScaleLabel">۱۰۰٪</span>
+    <button class="btn small" id="btnFontPlus">الف+</button>
+  </span>
+  <hr>
+  <h4>پشتیبان‌گیری</h4>
+  <button class="btn" id="btnExportJson">⭳ خروجی پشتیبان (JSON)</button>
+  <button class="btn" id="btnImportJson">⭱ بازیابی از فایل</button>
+  <input type="file" id="fileImport" accept="application/json">
+  <hr>
+  <button class="btn danger" id="btnReset">بازگشت به نسخه اصلی</button>
+</div>
+
+<div class="notebook-wrap">
+  <div class="page-nav">
+    <button class="page-nav-btn" id="btnPrevPage">صفحه قبل</button>
+    <span class="page-indicator" id="pageIndicator">صفحه ۱ از ۱</span>
+    <button class="page-nav-btn" id="btnNextPage">صفحه بعد</button>
+  </div>
+  <main id="content"></main>
+</div>
+
+<footer class="page-footer">دفتر یادداشت حسابداری — تغییرات به‌صورت خودکار در همین مرورگر ذخیره می‌شود. برای انتقال به سیستم دیگر، از «خروجی پشتیبان» استفاده کنید.</footer>
+
+<!-- Modal: quick add session -->
+<div class="modal-overlay" id="modalSession">
+  <div class="modal">
+    <h3>افزودن یادداشت جلسه جدید</h3>
+    <label class="field-label">عنوان جلسه</label>
+    <input type="text" id="sessionTitle" placeholder="مثلاً: جلسه ۲ - حسابداری موجودی کالا">
+    <label class="field-label">متن یا نکات را اینجا بچسبانید (هر خط، یک پاراگراف یا مورد جدید در نظر گرفته می‌شود)</label>
+    <textarea id="sessionText" placeholder="متن جزوه جدید را اینجا paste کنید..."></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modalSession')">انصراف</button>
+      <button class="btn primary" onclick="submitSession()">افزودن به جزوه</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: table size -->
+<div class="modal-overlay" id="modalTable">
+  <div class="modal">
+    <h3>افزودن جدول جدید</h3>
+    <div class="modal-row">
+      <div>
+        <label class="field-label">عنوان جدول (اختیاری)</label>
+        <input type="text" id="tableTitle" placeholder="مثلاً: مقایسه حساب‌ها">
+      </div>
+    </div>
+    <div class="modal-row">
+      <div>
+        <label class="field-label">تعداد ستون</label>
+        <input type="number" id="tableCols" value="2" min="1" max="8">
+      </div>
+      <div>
+        <label class="field-label">تعداد ردیف (بدون سرستون)</label>
+        <input type="number" id="tableRows" value="2" min="1" max="20">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modalTable')">انصراف</button>
+      <button class="btn primary" onclick="submitTable()">افزودن جدول</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   داده اولیه جزوه — برگرفته از فایل ورد اولیه (شامل تمام موارد
+   «نکته» که از روابط فلش‌دار اکسل استخراج شده و نباید حذف شوند)
+   ============================================================ */
+const DEFAULT_BLOCKS = [
+  {t:'h1', id:'b1', num:'۱', title:'تکالیف قانونی و مالیاتی مودیان'},
+  {t:'h2', id:'b2', num:'۱.۱', title:'سامانه مودیان و معاملات فصلی'},
+  {t:'p', id:'b3', html:'<ul>'+
+    '<li>اطلاعات معاملات باید از طریق سامانه مودیان مالیاتی و گزارش معاملات فصلی (موضوع ماده ۱۶۹) ارسال شود.</li>'+
+    '<li>با استفاده از اطلاعات معاملات فصلی و سامانه مودیان، گزارش ارزش‌افزوده تکمیل می‌گردد.</li>'+
+    '<li>در پایان هر ماه، مودی مکلف است اطلاعات حقوق پرداختی به کارکنان را حداکثر تا پایان ماه بعد اظهار نماید (موضوع مالیات تکلیفی).</li>'+
+    '</ul>'},
+  {t:'h2', id:'b4', num:'۱.۲', title:'مهلت ارسال اظهارنامه عملکرد (کارنامه مالی)'},
+  {t:'table', id:'b5', title:'', headers:['نوع مودی','مهلت ارسال اظهارنامه عملکرد'], rows:[
+    ['مشاغل (اشخاص حقیقی)','تا پایان خرداد ماه سال مالی بعد'],
+    ['اشخاص حقوقی','۴ ماه پس از پایان دوره مالی']]},
+  {t:'h2', id:'b6', num:'۱.۳', title:'مالیات بر مستغلات (اجاره ملک)'},
+  {t:'table', id:'b7', title:'', headers:['نوع مودی','مهلت / توضیح'], rows:[
+    ['اشخاص حقیقی','تا پایان تیر ماه'],
+    ['اشخاص حقوقی','تا پایان تیر ماه؛ در اظهارنامه عملکرد شرکت‌ها جدولی مربوط به درآمدهای غیرعملیاتی وجود دارد که در آن، املاک استیجاری شرکت افشا می‌شود.']]},
+
+  {t:'h1', id:'b8', num:'۲', title:'کلیات حسابداری'},
+  {t:'p', id:'b9', html:'<p>حسابداری فنی است برای طبقه‌بندی و تلخیص حساب‌ها، ثبت رخدادهای مالی و انعکاس این رخدادها در صورت‌های مالی، همراه با صیانت از اصل افشا و مستندسازی.</p>'},
+  {t:'h2', id:'b10', num:'۲.۱', title:'مبنای ثبت: نقدی در برابر تعهدی'},
+  {t:'p', id:'b11', html:'<ul>'+
+    '<li>مبنای نقدی: رخداد مالی در زمان دریافت یا پرداخت وجه نقد ثبت می‌شود.</li>'+
+    '<li>مبنای تعهدی: رخداد مالی در زمان وقوع (صرف‌نظر از دریافت یا پرداخت وجه) ثبت می‌شود.</li>'+
+    '</ul>'},
+  {t:'h2', id:'b12', num:'۲.۲', title:'حساب‌های موقت و حساب‌های دائمی'},
+  {t:'table', id:'b13', title:'', headers:['نوع حساب','توضیح','سرنوشت مانده در پایان دوره'], rows:[
+    ['حساب‌های موقت','دسته‌ای از حساب‌ها که نتیجه افزایش و کاهش آن‌ها در صورت سود و زیان بیان می‌شود.','به دوره مالی بعد منتقل نمی‌شوند (بسته می‌شوند).'],
+    ['حساب‌های دائمی','دسته‌ای از حساب‌ها که از زمان ایجاد همراه شرکت باقی می‌مانند.','مانده آن‌ها به دوره‌های مالی بعد منتقل می‌شود و تا انحلال شرکت اثر دارد.']]},
+  {t:'note', id:'b14', html:'حساب‌های موقت پایه صورت سود و زیان هستند و حساب‌های دائمی پایه ترازنامه (صورت وضعیت مالی).'},
+
+  {t:'h1', id:'b15', num:'۳', title:'معادله حسابداری و گزارش سود و زیان'},
+  {t:'h2', id:'b16', num:'۳.۱', title:'معادله بنیادین حسابداری'},
+  {t:'p', id:'b17', html:'<p><strong>دارایی = بدهی + حقوق مالکانه</strong></p><p>حقوق مالکانه = دارایی − بدهی</p>'},
+  {t:'h2', id:'b18', num:'۳.۲', title:'محاسبه فروش خالص و خرید خالص'},
+  {t:'table', id:'b19', title:'', headers:['ردیف','مربوط به فروش','مبلغ','مربوط به خرید','مبلغ'], rows:[
+    ['۱','فروش ناخالص','۲٬۰۰۰','خرید ناخالص','۱٬۰۰۰'],
+    ['۲','برگشت از فروش','۲۰۰','برگشت از خرید','۱۰۰'],
+    ['۳','تخفیف فروش','۱۰۰','تخفیف خرید','۵۰'],
+    ['نتیجه','فروش خالص','۱٬۷۰۰','خرید خالص','۸۵۰']]},
+  {t:'p', id:'b20', html:'<p>فروش خالص = فروش ناخالص − (برگشت از فروش + تخفیف فروش)</p><p>خرید خالص = خرید ناخالص − (برگشت از خرید + تخفیف خرید)</p>'},
+  {t:'h2', id:'b21', num:'۳.۳', title:'نمونه محاسبه گزارش سود و زیان'},
+  {t:'table', id:'b22', title:'', headers:['شرح','مبلغ'], rows:[
+    ['فروش کالا (خالص)','۱٬۷۰۰'],['درآمد خدمات','۲۰۰'],['جمع درآمدها','۱٬۹۰۰'],
+    ['خرید خالص (بهای تمام‌شده)','۸۵۰'],['هزینه','۳۰۰'],['جمع هزینه‌ها و بهای تمام‌شده','۱٬۱۵۰'],['سود دوره','۷۵۰']]},
+  {t:'h2', id:'b23', num:'۳.۴', title:'نرخ تسعیر و نرخ گزارشگری ارز'},
+  {t:'p', id:'b24', html:'<ul><li>نرخ برابری ارز نسبت به نرخ واحد پولی داخلی (ریالی) تعیین می‌شود.</li><li>گزارشگری مالی معاملات ارزی بر مبنای ریال انجام می‌شود.</li></ul>'},
+
+  {t:'h1', id:'b25', num:'۴', title:'دارایی‌های جاری (نقد و شبه‌نقد و موجودی)'},
+  {t:'p', id:'b26', html:'<p>دارایی جاری به آن دسته از دارایی‌ها گفته می‌شود که زودتر (نسبت به سایر دارایی‌ها) به وجه نقد تبدیل می‌شوند.</p>'},
+  {t:'h2', id:'b27', num:'۴.۱', title:'حساب‌های کل نقد و بانک'},
+  {t:'table', id:'b28', title:'', headers:['حساب','معادل انگلیسی','توضیح'], rows:[
+    ['صندوق','Cash','پول نقد در اختیار سازمان'],
+    ['بانک','Bank','موجودی حساب‌های بانکی شرکت'],
+    ['تنخواه‌گردان','Petty cash','ذخیره نقدی کوچک نگهداری‌شده توسط سازمان برای هزینه‌های جزئی'],
+    ['موجودی کالا','Inventory','کالاهای موجود برای فروش یا مصرف در تولید']]},
+  {t:'h2', id:'b29', num:'۴.۲', title:'قوانین مالیاتی تنخواه‌گردان'},
+  {t:'p', id:'b30', html:'<ul>'+
+    '<li>مستند قانونی: تبصره ۴ ماده ۱۴۷ قانون مالیات‌های مستقیم.</li>'+
+    '<li>سقف پرداخت از کارت تنخواه‌گردانی که متعلق به حساب‌های رسمی شرکت نباشد، معادل ۲۰۰٬۰۰۰٬۰۰۰ ریال است.</li>'+
+    '<li>مرجع اطلاعات: سامانه سازمان امور مالیاتی به نشانی www.tax.gov.ir</li>'+
+    '</ul>'},
+
+  {t:'h1', id:'b31', num:'۵', title:'داد و ستد، قرارداد و اینکوترمز'},
+  {t:'p', id:'b32', html:'<p>هر معامله (داد و ستد) بین طرفین بر پایه قرارداد شکل می‌گیرد. مستندات رایج شامل فاکتور خرید و فاکتور فروش است.</p>'},
+  {t:'h2', id:'b33', num:'۵.۱', title:'نقش‌های طرفین قرارداد'},
+  {t:'table', id:'b34', title:'', headers:['نوع قرارداد','طرف اول','طرف دوم'], rows:[
+    ['پیمانکاری','پیمانکار','کارفرما'],['اجاره','موجر','مستأجر'],['خرید و فروش کالا','فروشنده','خریدار']]},
+  {t:'h2', id:'b35', num:'۵.۲', title:'اینکوترمز (Incoterms)'},
+  {t:'p', id:'b36', html:'<p>اینکوترمز محل تحویل کالا و لحظه انتقال مالکیت کالا از فروشنده به خریدار را مشخص می‌کند.</p>'},
+  {t:'table', id:'b37', title:'', headers:['اصطلاح','توضیح'], rows:[
+    ['EXW','تحویل کالا در محل فروشنده؛ مسئولیت از همان‌جا به خریدار منتقل می‌شود.'],
+    ['FOB','تحویل کالا در بندر مبدأ (روی عرشه کشتی).'],
+    ['DDP','تحویل کالا با پرداخت عوارض توسط فروشنده تا محل خریدار.']]},
+
+  {t:'h1', id:'b38', num:'۶', title:'خرید نسیه، بدهی جاری و اسناد تجاری'},
+  {t:'h2', id:'b39', num:'۶.۱', title:'بدهی جاری'},
+  {t:'p', id:'b40', html:'<p>بدهی جاری به آن دسته از بدهی‌های شرکت گفته می‌شود که باید ظرف یک دوره مالی تسویه شود.</p>'},
+  {t:'h2', id:'b41', num:'۶.۲', title:'روش‌های تسویه معامله'},
+  {t:'p', id:'b42', html:'<ul>'+
+    '<li>تسویه نقدی: از طریق موجودی نقد و بانک (بانک، صندوق) یا تنخواه انجام می‌شود.</li>'+
+    '<li>خرید نسیه: تعهد پرداخت آتی است که به‌صورت «حساب پرداختنی» یا «اسناد پرداختنی» ثبت می‌شود.</li>'+
+    '</ul>'},
+  {t:'h2', id:'b43', num:'۶.۳', title:'حساب‌های پرداختنی/دریافتنی در برابر اسناد پرداختنی/دریافتنی'},
+  {t:'table', id:'b44', title:'', headers:['نوع تعهد','ماهیت','طرف بدهکار','طرف بستانکار'], rows:[
+    ['نسیه به‌صورت قول یا تعهد شفاهی/عرفی','حساب‌های پرداختنی (نزد خریدار) / حساب‌های دریافتنی (نزد فروشنده)','خریدار: بدهی جاری','فروشنده: دارایی جاری'],
+    ['نسیه به‌صورت سندی','اسناد پرداختنی (نزد خریدار) / اسناد دریافتنی (نزد فروشنده)','خریدار: بدهی جاری','فروشنده: دارایی جاری']]},
+  {t:'h2', id:'b45', num:'۶.۴', title:'انواع اوراق و اسناد مالی (مصادیق اسناد پرداختنی/دریافتنی)'},
+  {t:'table', id:'b46', title:'', headers:['نوع سند','توضیح مختصر'], rows:[
+    ['چک','دستور پرداخت مبلغ معین از حساب بانکی صادرکننده'],
+    ['سفته','تعهد پرداخت مبلغ معین در سررسید مشخص'],
+    ['اوراق قرضه','اوراق بدهی با سررسید و نرخ سود مشخص'],
+    ['اوراق خزانه','اوراق بدهی کوتاه‌مدت دولتی'],
+    ['برات (ارزی)','دستور پرداخت مبلغ معین به شخص ثالث، معمولاً در معاملات ارزی'],
+    ['ضمانت‌نامه بانکی','تعهد بانک به پرداخت در صورت عدم ایفای تعهد متعهد اصلی']]},
+
+  {t:'h1', id:'b47', num:'۷', title:'نمونه کاربردی: معامله نسیه بین دو شرکت'},
+  {t:'p', id:'b48', html:'<p>در این مثال، «شرکت بتا» نقش خریدار کالا و «شرکت آلفا» نقش فروشنده کالا را دارد و کالای بازرگانی موضوع معامله است.</p>'},
+  {t:'h2', id:'b49', num:'۷.۱', title:'دیدگاه حسابدار خریدار (شرکت بتا)'},
+  {t:'p', id:'b50', html:'<ul>'+
+    '<li>با دریافت کالا (رسید کالا): موجودی کالا افزایش می‌یابد.</li>'+
+    '<li>در صورت تسویه نقدی: بانک/تنخواه‌گردان/صندوق (دارایی جاری) کاهش می‌یابد.</li>'+
+    '<li>در صورت خرید نسیه: بدهی جاری (حساب پرداختنی یا اسناد پرداختنی) ایجاد یا افزایش می‌یابد.</li>'+
+    '</ul>'},
+  {t:'h2', id:'b51', num:'۷.۲', title:'دیدگاه حسابدار فروشنده (شرکت آلفا)'},
+  {t:'p', id:'b52', html:'<ul>'+
+    '<li>با خروج کالا از انبار (حواله خروج کالا): موجودی کالا (دارایی جاری) کاهش می‌یابد.</li>'+
+    '<li>در صورت تسویه نقدی: بانک/تنخواه‌گردان/صندوق (دارایی جاری) افزایش می‌یابد.</li>'+
+    '<li>در صورت فروش نسیه: دارایی جاری در قالب حساب‌های دریافتنی یا اسناد دریافتنی افزایش می‌یابد.</li>'+
+    '</ul>'},
+  {t:'note', id:'b53', html:'در هر معامله نسیه، آنچه نزد خریدار «بدهی» ثبت می‌شود (حساب پرداختنی/اسناد پرداختنی)، همان مبلغ نزد فروشنده به‌صورت «دارایی» ثبت می‌شود (حساب دریافتنی/اسناد دریافتنی).'},
+  {t:'h2', id:'b54', num:'۷.۳', title:'خلاصه اثر رویدادها بر طرفین معامله'},
+  {t:'table', id:'b55', title:'', headers:['رویداد','اثر نزد خریدار (بتا)','اثر نزد فروشنده (آلفا)'], rows:[
+    ['دریافت / تحویل کالا','افزایش موجودی کالا','کاهش موجودی کالا (حواله خروج)'],
+    ['تسویه نقدی','کاهش دارایی جاری (بانک/صندوق/تنخواه)','افزایش دارایی جاری (بانک/صندوق/تنخواه)'],
+    ['نسیه (قول/تعهد)','افزایش بدهی جاری (حساب پرداختنی)','افزایش دارایی جاری (حساب دریافتنی)'],
+    ['نسیه (سندی)','افزایش بدهی جاری (اسناد پرداختنی)','افزایش دارایی جاری (اسناد دریافتنی)']]},
+
+  {t:'h1', id:'b56', num:'۸', title:'صورت وضعیت مالی (ترازنامه) در پایان دوره — نمونه کاربردی'},
+  {t:'p', id:'b57', html:'<p>در پایان دوره مالی (برای نمونه، ساعت ۲۳:۵۹ روز ۲۹ اسفند سال X1)، شرکت صورت وضعیت مالی (ترازنامه) خود را بر پایه معادله بنیادین حسابداری تهیه می‌کند: <strong>دارایی = بدهی + حقوق مالکانه</strong>.</p>'},
+  {t:'h2', id:'b58', num:'۸.۱', title:'اقلام دارایی جاری'},
+  {t:'table', id:'b59', title:'', headers:['حساب','مبلغ (ریال)'], rows:[
+    ['صندوق','۱٬۰۰۰٬۰۰۰٬۰۰۰'],
+    ['بانک','۱۰٬۰۰۰٬۰۰۰٬۰۰۰'],
+    ['تنخواه‌گردان','۵۰۰٬۰۰۰٬۰۰۰'],
+    ['موجودی کالا','۳۰۰٬۰۰۰٬۰۰۰٬۰۰۰'],
+    ['حساب‌های دریافتنی','۱۶٬۰۰۰٬۰۰۰٬۰۰۰'],
+    ['اسناد دریافتنی','۵٬۰۰۰٬۰۰۰٬۰۰۰'],
+    ['پیش‌پرداخت','۴٬۰۰۰٬۰۰۰٬۰۰۰'],
+    ['جمع دارایی جاری','۳۳۶٬۵۰۰٬۰۰۰٬۰۰۰']]},
+  {t:'h2', id:'b60', num:'۸.۲', title:'اقلام بدهی جاری و حقوق مالکانه'},
+  {t:'table', id:'b61', title:'', headers:['حساب','مبلغ (ریال)'], rows:[
+    ['اسناد پرداختنی','۳۳۵٬۵۰۰٬۰۰۰٬۰۰۰'],
+    ['حساب‌های پرداختنی','۰'],
+    ['پیش‌دریافت','۰'],
+    ['جمع بدهی جاری','۳۳۵٬۵۰۰٬۰۰۰٬۰۰۰'],
+    ['سرمایه اولیه (جمع حقوق مالکانه)','۱٬۰۰۰٬۰۰۰٬۰۰۰']]},
+  {t:'note', id:'b62', html:'بررسی توازن معادله حسابداری: ۳۳۶٬۵۰۰٬۰۰۰٬۰۰۰ (دارایی جاری) = ۳۳۵٬۵۰۰٬۰۰۰٬۰۰۰ (بدهی جاری) + ۱٬۰۰۰٬۰۰۰٬۰۰۰ (حقوق مالکانه)'},
+  {t:'h2', id:'b63', num:'۸.۳', title:'نسبت جاری (Current Ratio)'},
+  {t:'p', id:'b64', html:'<p>نسبت جاری = دارایی جاری ÷ بدهی جاری</p><p>در این نمونه: ۳۳۶٬۵۰۰٬۰۰۰٬۰۰۰ ÷ ۳۳۵٬۵۰۰٬۰۰۰٬۰۰۰ ≈ ۱.۰۰</p>'},
+  {t:'note', id:'b65', html:'نسبت جاری توانایی شرکت در پرداخت بدهی‌های جاری (کوتاه‌مدت) از محل دارایی‌های جاری را نشان می‌دهد؛ عددی نزدیک یا بالاتر از ۱ معمولاً نشانه پوشش کافی بدهی‌های جاری است.'},
+
+  {t:'h1', id:'b66', num:'۹', title:'سامانه مودیان مالیاتی: فاکتور، پیش‌فاکتور و پیش‌پرداخت'},
+  {t:'p', id:'b67', html:'<p>در سامانه مودیان مالیاتی، فروشنده «فاکتور فروش» صادر می‌کند و خریدار همان معامله را به‌صورت «فاکتور خرید» ثبت می‌کند؛ این دو سند باید با یکدیگر مطابقت داشته باشند.</p>'},
+  {t:'h2', id:'b68', num:'۹.۱', title:'پیش‌فاکتور فروش و پیش‌پرداخت (بیعانه)'},
+  {t:'p', id:'b69', html:'<ul>'+
+    '<li>فروشنده می‌تواند پیش از انجام فروش قطعی، «پیش‌فاکتور فروش» برای خریدار صادر کند.</li>'+
+    '<li>در این حالت، خریدار متعهد می‌شود بخشی از مبلغ پیش‌فاکتور را بپردازد؛ این مبلغ در سرفصل حسابداری «پیش‌پرداخت (بیعانه)» ثبت می‌شود.</li>'+
+    '</ul>'},
+  {t:'table', id:'b70', title:'', headers:['سند','صادرکننده','طرف دریافت‌کننده'], rows:[
+    ['فاکتور فروش','فروشنده','خریدار (ثبت به‌عنوان فاکتور خرید)'],
+    ['پیش‌فاکتور فروش','فروشنده','خریدار'],
+    ['پیش‌پرداخت (بیعانه)','خریدار (پرداخت‌کننده)','فروشنده']]},
+  {t:'note', id:'b71', html:'پیش‌پرداخت (بیعانه) نزد خریدار در سرفصل دارایی جاری ثبت می‌شود؛ همان مبلغ نزد فروشنده تا زمان تحویل نهایی کالا/خدمت در سرفصل «پیش‌دریافت» (بدهی جاری) قرار می‌گیرد — مشابه آنچه در جدول بدهی جاری فصل ۸.۲ آمد.'}
+];
+
+const STORAGE_KEY = 'accountingNotebook_v1';
+const FONT_SCALE_KEY = 'accountingNotebook_fontScale_v1';
+let blocks = [];
+let idCounter = 1000;
+let globalFontScale = parseFloat(localStorage.getItem(FONT_SCALE_KEY)) || 1;
+
+function toFaDigits(n){
+  const map = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+  return String(n).replace(/\d/g, d=>map[+d]);
+}
+function applyGlobalFontScale(){
+  document.documentElement.style.setProperty('--font-scale', globalFontScale);
+  document.getElementById('fontScaleLabel').textContent = toFaDigits(Math.round(globalFontScale*100))+'٪';
+  localStorage.setItem(FONT_SCALE_KEY, globalFontScale);
+}
+document.getElementById('btnFontPlus').onclick = ()=>{
+  globalFontScale = Math.min(1.8, Math.round((globalFontScale+0.1)*100)/100);
+  applyGlobalFontScale();
+};
+document.getElementById('btnFontMinus').onclick = ()=>{
+  globalFontScale = Math.max(0.7, Math.round((globalFontScale-0.1)*100)/100);
+  applyGlobalFontScale();
+};
+
+function newId(){ idCounter++; return 'b_'+Date.now().toString(36)+idCounter; }
+
+function load(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(raw){
+    try{ blocks = JSON.parse(raw); }
+    catch(e){ blocks = JSON.parse(JSON.stringify(DEFAULT_BLOCKS)); }
+  } else {
+    blocks = JSON.parse(JSON.stringify(DEFAULT_BLOCKS));
+  }
+}
+function save(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(blocks));
+}
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>el.classList.remove('show'), 2200);
+}
+
+/* ---------- render / pagination ---------- */
+let currentPage = 0;
+let totalPages = 1;
+const PAGE_HEIGHT_BUDGET = 1250;
+
+function render(){
+  const c = document.getElementById('content');
+  c.innerHTML = '';
+  if(blocks.length===0){
+    c.innerHTML = '<div class="empty-hint">جزوه خالی است. از آیکون ⚙ برای افزودن محتوا استفاده کنید.</div>';
+    totalPages = 1; currentPage = 0;
+    updatePageUI();
+    return;
+  }
+
+  const pagesRoot = document.createElement('div');
+  pagesRoot.className = 'pages-root';
+  pagesRoot.id = 'pagesRoot';
+  c.appendChild(pagesRoot);
+
+  const nodes = blocks.map((b, idx)=> renderBlock(b, idx));
+
+  // بوم اندازه‌گیری نامرئی برای تعیین اینکه هر بخش چقدر ارتفاع می‌گیرد
+  const probe = document.createElement('div');
+  probe.className = 'page-inner probe';
+  pagesRoot.appendChild(probe);
+
+  let pages = [[]];
+  let curH = 0;
+  nodes.forEach(node=>{
+    probe.appendChild(node);
+    const h = node.getBoundingClientRect().height;
+    probe.removeChild(node);
+    const withGap = h + 14;
+    if(curH + withGap > PAGE_HEIGHT_BUDGET && pages[pages.length-1].length){
+      pages.push([]);
+      curH = 0;
+    }
+    pages[pages.length-1].push(node);
+    curH += withGap;
+  });
+  pagesRoot.removeChild(probe);
+
+  totalPages = pages.length;
+  if(currentPage > totalPages-1) currentPage = totalPages-1;
+  if(currentPage < 0) currentPage = 0;
+
+  pages.forEach((list, pi)=>{
+    const pageEl = document.createElement('div');
+    pageEl.className = 'page' + (pi===currentPage ? ' active' : '');
+    pageEl.dataset.pageIndex = pi;
+    const inner = document.createElement('div');
+    inner.className = 'page-inner';
+    list.forEach(n=> inner.appendChild(n));
+    const stamp = document.createElement('div');
+    stamp.className = 'page-num-stamp';
+    stamp.textContent = 'برگ ' + toFaDigits(pi+1);
+    inner.appendChild(stamp);
+    pageEl.appendChild(inner);
+    pagesRoot.appendChild(pageEl);
+  });
+
+  updatePageUI();
+}
+
+function updatePageUI(){
+  const label = document.getElementById('pageIndicator');
+  if(label) label.textContent = 'صفحه ' + toFaDigits(currentPage+1) + ' از ' + toFaDigits(totalPages);
+  document.querySelectorAll('.page').forEach(p=>{
+    p.classList.toggle('active', +p.dataset.pageIndex === currentPage);
+  });
+  const prevBtn = document.getElementById('btnPrevPage');
+  const nextBtn = document.getElementById('btnNextPage');
+  if(prevBtn) prevBtn.disabled = currentPage <= 0;
+  if(nextBtn) nextBtn.disabled = currentPage >= totalPages-1;
+}
+
+function gotoPage(n){
+  if(n<0 || n>=totalPages) return;
+  currentPage = n;
+  updatePageUI();
+  document.querySelector('.notebook-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+}
+document.getElementById('btnPrevPage').onclick = ()=> gotoPage(currentPage-1);
+document.getElementById('btnNextPage').onclick = ()=> gotoPage(currentPage+1);
+
+/* ---------- settings panel ---------- */
+const settingsPanel = document.getElementById('settingsPanel');
+document.getElementById('btnSettingsToggle').onclick = (e)=>{
+  e.stopPropagation();
+  settingsPanel.classList.toggle('open');
+};
+document.addEventListener('click', (e)=>{
+  if(settingsPanel.classList.contains('open') &&
+     !settingsPanel.contains(e.target) &&
+     e.target.id !== 'btnSettingsToggle'){
+    settingsPanel.classList.remove('open');
+  }
+});
+
+function controlsHtml(idx){
+  const isMine = !!blocks[idx].mine;
+  const hasOwnScale = typeof blocks[idx].fontScale === 'number';
+  return `<div class="block-controls">
+    <div class="icon-btn mine-toggle${isMine?' active':''}" title="${isMine?'علامت‌گذاری به‌عنوان محتوای اصلی':'علامت‌گذاری به‌عنوان یادداشت خودم (آبی)'}" onclick="toggleMine(${idx})">✎</div>
+    <div class="icon-btn font-btn" title="کوچک‌تر کردن فونت این بخش (جدا از بقیه)" onclick="blockFont(${idx},-0.1)">الف−</div>
+    <div class="icon-btn font-btn" title="بزرگ‌تر کردن فونت این بخش (جدا از بقیه)" onclick="blockFont(${idx},0.1)">الف+</div>
+    ${hasOwnScale ? `<div class="icon-btn font-btn" title="بازگرداندن فونت این بخش به حالت عمومی" onclick="blockFontReset(${idx})">↺</div>` : ''}
+    <div class="icon-btn" title="انتقال به بالا" onclick="moveBlock(${idx},-1)">↑</div>
+    <div class="icon-btn" title="انتقال به پایین" onclick="moveBlock(${idx},1)">↓</div>
+    <div class="icon-btn del" title="حذف" onclick="deleteBlock(${idx})">✕</div>
+  </div>`;
+}
+function blockFont(idx, delta){
+  const current = (typeof blocks[idx].fontScale === 'number') ? blocks[idx].fontScale : globalFontScale;
+  let ns = Math.round((current + delta) * 100) / 100;
+  ns = Math.min(1.8, Math.max(0.7, ns));
+  blocks[idx].fontScale = ns;
+  save(); render();
+}
+function blockFontReset(idx){
+  delete blocks[idx].fontScale;
+  save(); render();
+}
+function toggleMine(idx){
+  blocks[idx].mine = !blocks[idx].mine;
+  save(); render();
+}
+
+function renderBlock(b, idx){
+  const wrap = document.createElement('div');
+  wrap.className = 'block';
+  if(b.t==='note') wrap.classList.add('note-block');
+  if(b.t==='canvas') wrap.classList.add('canvas-block');
+  if(b.mine) wrap.classList.add('mine');
+  if(typeof b.fontScale === 'number'){
+    wrap.style.setProperty('--font-scale', b.fontScale);
+  }
+
+  if(b.t==='h1'){
+    wrap.innerHTML = controlsHtml(idx) +
+      `<h2 class="h1block"><span class="num-badge">${esc(b.num||'')}</span>
+       <span contenteditable="true" data-field="title" data-idx="${idx}">${esc(b.title)}</span></h2>`;
+  } else if(b.t==='h2'){
+    wrap.innerHTML = controlsHtml(idx) +
+      `<h3 class="h2block"><span class="num-badge">${esc(b.num||'')}</span>
+       <span contenteditable="true" data-field="title" data-idx="${idx}">${esc(b.title)}</span></h3>`;
+  } else if(b.t==='p'){
+    wrap.innerHTML = controlsHtml(idx) +
+      `<div class="p-block" contenteditable="true" data-field="html" data-idx="${idx}">${b.html}</div>`;
+  } else if(b.t==='note'){
+    wrap.innerHTML = controlsHtml(idx) +
+      `<div class="note-label">نکته</div>
+       <div class="p-block" contenteditable="true" data-field="html" data-idx="${idx}">${b.html}</div>`;
+  } else if(b.t==='table'){
+    wrap.appendChild(renderTable(b, idx));
+    const ctl = document.createElement('div');
+    ctl.innerHTML = controlsHtml(idx);
+    wrap.insertBefore(ctl.firstChild, wrap.firstChild);
+  } else if(b.t==='canvas'){
+    wrap.appendChild(renderCanvas(b, idx));
+    const ctl = document.createElement('div');
+    ctl.innerHTML = controlsHtml(idx);
+    wrap.insertBefore(ctl.firstChild, wrap.firstChild);
+  }
+
+  wrap.querySelectorAll('[contenteditable]').forEach(node=>{
+    node.addEventListener('blur', onFieldEdit);
+  });
+  return wrap;
+}
+
+function onFieldEdit(e){
+  const idx = +e.target.dataset.idx;
+  const field = e.target.dataset.field;
+  blocks[idx][field] = e.target.innerHTML.trim();
+  save();
+}
+
+function esc(s){
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ---------- tables ---------- */
+function renderTable(b, idx){
+  const box = document.createElement('div');
+  let html = '';
+  if(b.title){
+    html += `<h3 class="h2block" style="margin-bottom:8px;"><span contenteditable="true" data-field="title" data-idx="${idx}">${esc(b.title)}</span></h3>`;
+  }
+  html += `<table class="jz-table" data-idx="${idx}"><thead><tr>`;
+  b.headers.forEach((h,ci)=>{
+    html += `<th contenteditable="true" data-cell="h_${ci}">${esc(h)}</th>`;
+  });
+  html += `</tr></thead><tbody>`;
+  b.rows.forEach((row,ri)=>{
+    html += '<tr>';
+    row.forEach((cell,ci)=>{
+      html += `<td contenteditable="true" data-cell="${ri}_${ci}">${esc(cell)}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += `</tbody></table>
+    <div class="table-tools">
+      <button class="btn small" onclick="tableAddRow(${idx})">＋ ردیف</button>
+      <button class="btn small" onclick="tableAddCol(${idx})">＋ ستون</button>
+      <button class="btn small" onclick="tableDelRow(${idx})">－ آخرین ردیف</button>
+      <button class="btn small" onclick="tableDelCol(${idx})">－ آخرین ستون</button>
+    </div>`;
+  box.innerHTML = html;
+
+  box.querySelectorAll('[data-cell]').forEach(td=>{
+    td.addEventListener('blur', ()=>{
+      const key = td.dataset.cell;
+      if(key.startsWith('h_')){
+        const ci = +key.split('_')[1];
+        blocks[idx].headers[ci] = td.innerHTML.trim();
+      } else {
+        const [ri,ci] = key.split('_').map(Number);
+        blocks[idx].rows[ri][ci] = td.innerHTML.trim();
+      }
+      save();
+    });
+  });
+  box.querySelectorAll('[data-field="title"]').forEach(node=>{
+    node.addEventListener('blur', onFieldEdit);
+  });
+  return box;
+}
+function tableAddRow(idx){
+  const cols = blocks[idx].headers.length;
+  blocks[idx].rows.push(new Array(cols).fill(''));
+  save(); render();
+}
+function tableAddCol(idx){
+  blocks[idx].headers.push('ستون جدید');
+  blocks[idx].rows.forEach(r=>r.push(''));
+  save(); render();
+}
+function tableDelRow(idx){
+  if(blocks[idx].rows.length>0){ blocks[idx].rows.pop(); save(); render(); }
+}
+function tableDelCol(idx){
+  if(blocks[idx].headers.length>1){
+    blocks[idx].headers.pop();
+    blocks[idx].rows.forEach(r=>r.pop());
+    save(); render();
+  }
+}
+
+/* ---------- canvas drawing (arrows / freehand / table-grid / text) ---------- */
+function renderCanvas(b, idx){
+  const box = document.createElement('div');
+  const toolId = 'tools_'+idx;
+  box.innerHTML = `
+    <div class="canvas-toolbar" id="${toolId}">
+      <div class="tool active" data-tool="arrow">↗ فلش</div>
+      <div class="tool" data-tool="pen">✎ آزاد</div>
+      <div class="tool" data-tool="grid">▦ جدول</div>
+      <div class="tool" data-tool="text">Ａ متن</div>
+      <input type="color" class="color-dot" value="${b.color||'#2F4B3C'}" id="color_${idx}">
+      <div class="tool" onclick="canvasUndo(${idx})">↺ لغو آخرین</div>
+      <div class="tool" onclick="canvasClear(${idx})">پاک کردن همه</div>
+    </div>
+    <div class="canvas-wrap">
+      <svg class="draw-canvas" id="svg_${idx}" data-idx="${idx}">
+        <defs>
+          <marker id="arrowhead_${idx}" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L8,3 L0,6 Z" fill="context-stroke"></path>
+          </marker>
+        </defs>
+        <g id="g_${idx}">${b.svg||''}</g>
+      </svg>
+    </div>`;
+  setTimeout(()=>initCanvas(idx, box), 0);
+  return box;
+}
+
+function initCanvas(idx, box){
+  const svg = box.querySelector('#svg_'+idx);
+  const g = box.querySelector('#g_'+idx);
+  const toolbar = box.querySelector('#tools_'+idx);
+  const colorInput = box.querySelector('#color_'+idx);
+  let currentTool = 'arrow';
+  let drawing = false;
+  let startPt = null;
+  let freePoints = [];
+  let tempEl = null;
+
+  toolbar.querySelectorAll('.tool[data-tool]').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      toolbar.querySelectorAll('.tool[data-tool]').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      currentTool = t.dataset.tool;
+    });
+  });
+
+  function svgPoint(evt){
+    const rect = svg.getBoundingClientRect();
+    const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+    const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+    return { x: clientX-rect.left, y: clientY-rect.top };
+  }
+
+  function commit(){
+    blocks[idx].svg = g.innerHTML;
+    blocks[idx].color = colorInput.value;
+    save();
+  }
+
+  svg.addEventListener('pointerdown', (e)=>{
+    const pt = svgPoint(e);
+    const color = colorInput.value;
+    if(currentTool==='text'){
+      const txt = prompt('متن مورد نظر را وارد کنید:');
+      if(txt){
+        const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t.setAttribute('x', pt.x); t.setAttribute('y', pt.y);
+        t.setAttribute('fill', color); t.setAttribute('font-size','14');
+        t.setAttribute('font-family','Vazirmatn,Tahoma,sans-serif');
+        t.textContent = txt;
+        g.appendChild(t);
+        commit();
+      }
+      return;
+    }
+    if(currentTool==='grid'){
+      const cols = parseInt(prompt('تعداد ستون جدول؟','3')||'3',10);
+      const rows = parseInt(prompt('تعداد ردیف جدول؟','3')||'3',10);
+      const w = 160, h = 100;
+      const gEl = document.createElementNS('http://www.w3.org/2000/svg','g');
+      const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      rect.setAttribute('x',pt.x); rect.setAttribute('y',pt.y);
+      rect.setAttribute('width',w); rect.setAttribute('height',h);
+      rect.setAttribute('fill','none'); rect.setAttribute('stroke',color); rect.setAttribute('stroke-width','1.5');
+      gEl.appendChild(rect);
+      for(let i=1;i<cols;i++){
+        const ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+        ln.setAttribute('x1', pt.x+(w/cols)*i); ln.setAttribute('y1', pt.y);
+        ln.setAttribute('x2', pt.x+(w/cols)*i); ln.setAttribute('y2', pt.y+h);
+        ln.setAttribute('stroke',color); ln.setAttribute('stroke-width','1');
+        gEl.appendChild(ln);
+      }
+      for(let i=1;i<rows;i++){
+        const ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+        ln.setAttribute('x1', pt.x); ln.setAttribute('y1', pt.y+(h/rows)*i);
+        ln.setAttribute('x2', pt.x+w); ln.setAttribute('y2', pt.y+(h/rows)*i);
+        ln.setAttribute('stroke',color); ln.setAttribute('stroke-width','1');
+        gEl.appendChild(ln);
+      }
+      g.appendChild(gEl);
+      commit();
+      return;
+    }
+    drawing = true;
+    startPt = pt;
+    if(currentTool==='arrow'){
+      tempEl = document.createElementNS('http://www.w3.org/2000/svg','line');
+      tempEl.setAttribute('x1',pt.x); tempEl.setAttribute('y1',pt.y);
+      tempEl.setAttribute('x2',pt.x); tempEl.setAttribute('y2',pt.y);
+      tempEl.setAttribute('stroke',color); tempEl.setAttribute('stroke-width','2.5');
+      tempEl.setAttribute('marker-end', `url(#arrowhead_${idx})`);
+      g.appendChild(tempEl);
+    } else if(currentTool==='pen'){
+      freePoints = [pt];
+      tempEl = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+      tempEl.setAttribute('points', `${pt.x},${pt.y}`);
+      tempEl.setAttribute('fill','none'); tempEl.setAttribute('stroke',color); tempEl.setAttribute('stroke-width','2.2');
+      tempEl.setAttribute('stroke-linecap','round'); tempEl.setAttribute('stroke-linejoin','round');
+      g.appendChild(tempEl);
+    }
+  });
+
+  svg.addEventListener('pointermove', (e)=>{
+    if(!drawing) return;
+    const pt = svgPoint(e);
+    if(currentTool==='arrow' && tempEl){
+      tempEl.setAttribute('x2', pt.x); tempEl.setAttribute('y2', pt.y);
+    } else if(currentTool==='pen' && tempEl){
+      freePoints.push(pt);
+      tempEl.setAttribute('points', freePoints.map(p=>p.x+','+p.y).join(' '));
+    }
+  });
+
+  function endDraw(){
+    if(!drawing) return;
+    drawing = false;
+    tempEl = null;
+    commit();
+  }
+  svg.addEventListener('pointerup', endDraw);
+  svg.addEventListener('pointerleave', endDraw);
+}
+
+function canvasUndo(idx){
+  const g = document.getElementById('g_'+idx);
+  if(g && g.lastElementChild){
+    g.removeChild(g.lastElementChild);
+    blocks[idx].svg = g.innerHTML;
+    save();
+  }
+}
+function canvasClear(idx){
+  if(!confirm('همه ترسیم‌های این بوم پاک شود؟')) return;
+  const g = document.getElementById('g_'+idx);
+  if(g){ g.innerHTML=''; blocks[idx].svg=''; save(); }
+}
+
+/* ---------- block CRUD ---------- */
+function moveBlock(idx, dir){
+  const ni = idx+dir;
+  if(ni<0 || ni>=blocks.length) return;
+  const tmp = blocks[idx]; blocks[idx]=blocks[ni]; blocks[ni]=tmp;
+  save(); render();
+}
+function deleteBlock(idx){
+  if(!confirm('این بخش حذف شود؟')) return;
+  blocks.splice(idx,1);
+  save(); render();
+}
+function addBlock(block, focusAtEnd){
+  blocks.push(block);
+  save(); render();
+  if(focusAtEnd){
+    currentPage = totalPages - 1;
+    updatePageUI();
+    document.querySelector('.notebook-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+document.getElementById('btnAddHeading').onclick = ()=>{
+  const level = confirm('سرفصل اصلی باشد؟ (Cancel = زیرسرفصل)') ? 'h1':'h2';
+  const title = prompt('عنوان سرفصل را وارد کنید:', level==='h1' ? 'سرفصل جدید' : 'زیرسرفصل جدید');
+  if(!title) return;
+  const num = prompt('شماره (اختیاری، مثلاً ۸ یا ۸.۱):','') || '';
+  addBlock({t:level, id:newId(), num, title, mine:true}, true);
+};
+document.getElementById('btnAddText').onclick = ()=>{
+  addBlock({t:'p', id:newId(), html:'متن جدید را اینجا بنویسید...', mine:true}, true);
+};
+document.getElementById('btnAddNote').onclick = ()=>{
+  addBlock({t:'note', id:newId(), html:'نکته جدید را اینجا بنویسید...', mine:true}, true);
+};
+document.getElementById('btnAddTable').onclick = ()=> openModal('modalTable');
+document.getElementById('btnAddCanvas').onclick = ()=>{
+  addBlock({t:'canvas', id:newId(), svg:'', color:'#1D4ED8', mine:true}, true);
+};
+document.getElementById('btnAddSession').onclick = ()=> openModal('modalSession');
+
+function submitTable(){
+  const cols = Math.max(1, parseInt(document.getElementById('tableCols').value||'2',10));
+  const rows = Math.max(1, parseInt(document.getElementById('tableRows').value||'2',10));
+  const title = document.getElementById('tableTitle').value.trim();
+  const headers = Array.from({length:cols}, (_,i)=>'ستون '+(i+1));
+  const rowsData = Array.from({length:rows}, ()=> new Array(cols).fill(''));
+  addBlock({t:'table', id:newId(), title, headers, rows:rowsData, mine:true}, true);
+  closeModal('modalTable');
+}
+
+function submitSession(){
+  const title = document.getElementById('sessionTitle').value.trim() || 'جلسه جدید';
+  const text = document.getElementById('sessionText').value;
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  addBlock({t:'h1', id:newId(), num:'', title, mine:true}, false);
+  if(lines.length){
+    const html = '<ul>'+lines.map(l=>'<li>'+esc(l)+'</li>').join('')+'</ul>';
+    addBlock({t:'p', id:newId(), html, mine:true}, false);
+  } else {
+    addBlock({t:'p', id:newId(), html:'متن یادداشت را اینجا کامل کنید...', mine:true}, false);
+  }
+  document.getElementById('sessionTitle').value='';
+  document.getElementById('sessionText').value='';
+  closeModal('modalSession');
+  render();
+  currentPage = totalPages - 1;
+  updatePageUI();
+  document.querySelector('.notebook-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+  toast('یادداشت جلسه جدید اضافه شد');
+}
+
+/* ---------- modal helpers ---------- */
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(ov=>{
+  ov.addEventListener('click', (e)=>{ if(e.target===ov) ov.classList.remove('open'); });
+});
+
+/* ---------- import / export / print / reset ---------- */
+document.getElementById('btnExportJson').onclick = ()=>{
+  const data = JSON.stringify(blocks, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const d = new Date();
+  const stamp = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  a.download = 'جزوه-حسابداری-پشتیبان-'+stamp+'.json';
+  a.click();
+  toast('فایل پشتیبان دانلود شد');
+};
+
+document.getElementById('btnImportJson').onclick = ()=> document.getElementById('fileImport').click();
+document.getElementById('fileImport').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = JSON.parse(reader.result);
+      if(!Array.isArray(data)) throw new Error('bad format');
+      const mode = confirm('محتوای فایل جایگزین جزوه فعلی شود؟\nOK = جایگزینی کامل | Cancel = افزودن به انتهای جزوه فعلی');
+      if(mode){ blocks = data; }
+      else { blocks = blocks.concat(data.map(b=>({...b, id:newId()}))); }
+      save(); render();
+      toast('بازیابی با موفقیت انجام شد');
+    }catch(err){
+      alert('فایل معتبر نیست یا خراب است.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+document.getElementById('btnPrint').onclick = ()=>{
+  // بستن پنل تنظیمات قبل از چاپ
+  settingsPanel.classList.remove('open');
+  // چاپ مستقیم در همین تب و همین پنجره (بدون بازکردن تب/پنجرهٔ جدید)؛
+  // کاربر از دیالوگ چاپ مرورگر گزینهٔ «ذخیره به‌صورت PDF» را انتخاب می‌کند
+  // و فایل به‌صورت پنجرهٔ دانلود در همان تب ذخیره می‌شود.
+  // کنترل‌ها و نوار ابزار طبق قواعد @media print به‌طور خودکار در نسخهٔ چاپی/PDF پنهان می‌شوند.
+  setTimeout(()=> window.print(), 50);
+};
+
+document.getElementById('btnReset').onclick = ()=>{
+  if(!confirm('همه تغییرات پاک شده و جزوه به نسخه اصلی برمی‌گردد. ادامه می‌دهید؟')) return;
+  blocks = JSON.parse(JSON.stringify(DEFAULT_BLOCKS));
+  save(); render();
+  toast('جزوه به نسخه اصلی بازگشت');
+};
+
+/* ---------- init ---------- */
+applyGlobalFontScale();
+load();
+render();
+</script>
+</body>
+</html>
